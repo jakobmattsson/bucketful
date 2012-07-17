@@ -41,7 +41,7 @@ exports.deploy = function(options) {
   var errHandler = function(f) {
     return function(err) {
       if (err) {
-        console.log("FAIL");
+        console.log("FAIL:", err);
         return;
       }
       return f.apply(null, Array.prototype.slice.call(arguments, 1));
