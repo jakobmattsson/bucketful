@@ -15,6 +15,7 @@ exports.deploy = function(options) {
   nconf.file('user', path.join(process.env.HOME, '.bucketful'));
   nconf.env().defaults({
     bucketful: {
+      targetDir: path.join(process.cwd(), 'public'),
       exclude: [],
       opra: { inline: true }
     }
@@ -25,7 +26,7 @@ exports.deploy = function(options) {
   var aws_secret = nconf.get('bucketful:secret');
   var excludes = nconf.get('bucketful:exclude');
   var opraOptions = nconf.get('bucketful:opra');
-  var targetDir = path.join(process.cwd(), 'public');
+  var targetDir = path.resolve(nconf.get('bucketful:targetDir'));
 
   console.log("targetDir", targetDir);
   console.log('Loaded the following options', nconf.get('bucketful'));
