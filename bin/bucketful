@@ -1,3 +1,34 @@
 #!/usr/bin/env node
 
+var fs = require('fs');
+var path = require('path');
+var optimist = require('optimist');
+
+var argv = optimist
+  .usage('Preprocesses files using opra and uploads them to S3')
+  .describe('bucketful:targetDir', 'Directory to use as starting point for the upload')
+  .describe('bucketful:bucket', 'S3 bucket used as target for the upload')
+  .describe('bucketful:key', 'AWS access key')
+  .describe('bucketful:secret', 'AWS access secret')
+  .describe('bucketful:include', 'Files/folders to include in the upload')
+  .describe('bucketful:exclude', 'Files/folders to exclude from the upload')
+  .describe('bucketful:opra', 'Configuration arguments for opra')
+  .describe('version', 'Print the current version number')
+  .describe('help', 'Show this help message')
+  .default('bucketful:targetDir', './public')
+  .alias('version', 'v')
+  .alias('help', 'h')
+  .argv;
+
+if (argv.help) {
+  console.log(optimist.help());
+  return;
+}
+if (argv.version) {
+  fs.readFile(path.join(__dirname, '../package.json'), 'utf8', function(err, data) {
+    console.log(err ? err : JSON.parse(data).version);
+  });
+  return;
+}
+
 require('../src/bucketful').deploy();
