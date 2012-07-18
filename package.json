@@ -16,7 +16,7 @@
     "node": ">=0.6.0"
   },
   "dependencies": {
-    "opra": "0.10.4",
+    "opra": "0.10.5",
     "powerfs": "0.1.0",
     "knox": "0.0.9",
     "async": "0.1.22",
