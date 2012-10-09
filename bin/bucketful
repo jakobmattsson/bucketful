@@ -31,4 +31,4 @@ if (argv.version) {
   return;
 }
 
-require('../src/bucketful').deploy();
+require('../lib/bucketful').deploy();
