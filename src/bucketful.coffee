@@ -8,6 +8,9 @@ nconf = require 'nconf'
 wrench = require 'wrench'
 powerfs = require 'powerfs'
 
+process.on 'uncaughtException', ->
+  console.log arguments
+
 qfilter = (list, callback) ->
   ps = list.map callback
   Q.all(ps).then (mask) ->
@@ -40,6 +43,10 @@ exports.deploy = (options) ->
   console.log "Resolved targetDir", targetDir
   console.log "Loaded the following options", nconf.get 'bucketful'
 
+  console.log("Files to compile using opra:")
+  html.forEach (y) ->
+    console.log("*", y)
+
   client = knox.createClient
     key: aws_key
     secret: aws_secret
@@ -69,17 +76,27 @@ exports.deploy = (options) ->
 
       else
         files = wrench.readdirSyncRecursive(targetDir)
+
+      files = files.map (x) -> { fullpath: path.join(targetDir, x), name: x }
       files
 
     # Exclude files based on the "excludes" argument
     .then (files) ->
       files.filter (file) ->
         excludes.every (x) ->
-          file != x and !_s.startsWith(file, x + "/")
+          file.name != x && !_s.startsWith(file.name, x + "/")
 
     # Exclude directories
     .then (files) ->
-      qfilter files, (file) -> powerfsIsFile(path.join(targetDir, file))
+      qfilter files, (file) -> powerfsIsFile file.fullpath
+
+    # Exclude hidden files
+    .then (files) ->
+      files.filter (file) -> file.name.split('/').every (part) -> part[0] != '.'
+
+    # Exclude opra-processed files
+    .then (files) ->
+      files.filter (file) -> !_(html).contains(file.name)
 
     # Upload the remaining files
     .then (files) ->
@@ -87,15 +104,32 @@ exports.deploy = (options) ->
       counter = 0
 
       Q.all files.map (file, i) ->
-        clientPutFile(path.join(targetDir, file), "/" + file).then ->
+        clientPutFile(file.fullpath, "/" + file.name).then ->
           counter++
-          console.log "static [#{counter}/#{files.length}] #{file}"
+          console.log "static [#{counter}/#{files.length}] #{file.name}"
+
+
+
+  ## This functions manages the files that should be compiled by opra
+  uploadOpraTrack = ->
+    uploadCount = 0
+    console.log "Uploading #{html.length} opra files..."
+
+    # for each html file
+    Q.all html.map (file) ->
+
+      clientPutFile("tmp/" + file, "/" + file)
+
+      # print the completion message
+      .then ->
+        uploadCount++
+        console.log "opra [#{uploadCount}/#{html.length}] Upload of #{file} completed"
 
 
 
   ## This functions manages the files that should be compiled by opra
   compileTrack = ->
-    uploadCount = 0
+    compileCount = 0
     console.log "Compiling #{html.length} opra files..."
 
     # for each html file
@@ -107,21 +141,16 @@ exports.deploy = (options) ->
       # write the file to disk
       .then (data) ->
         powerfsWriteFile "tmp/" + file, data, "utf8"
-
-      # upload the file
       .then ->
-        clientPutFile "tmp/" + file, "/" + file
-
-      # print the completion message
-      .then ->
-        uploadCount++
-        console.log "opra [#{uploadCount}/#{html.length}] Upload of #{file} completed"
-
-    # when all html files have been processed
-    .then ->
-      console.log "done"
+        compileCount++
+        console.log "compiled [#{compileCount}/#{html.length}]"
 
 
 
   # Run the two tracks at the same time
-  Q.all([uploadTrack(), compileTrack()]).end()
+  track1 = Q.all([compileTrack()]).then -> uploadOpraTrack()
+  track2 = Q.all([uploadTrack()])
+
+  Q.all([track1, track2]).then ->
+    console.log "done"
+  .end()
