@@ -32,4 +32,4 @@ if (argv.version) {
 }
 
 require('coffee-script')
-require('../src/bucketful').deploy();
+require('../lib/bucketful').deploy();
