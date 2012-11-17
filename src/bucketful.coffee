@@ -100,7 +100,7 @@ exports.deploy = (options) ->
       counter = 0
 
       Q.all files.map (file, i) ->
-        clientPutFile(file.fullpath, "/" + file.name).then ->
+        clientPutFile(file.fullpath, "/" + file.name, { 'x-amz-acl': 'public-read' }).then ->
           counter++
           console.log "static [#{counter}/#{files.length}] #{file.name}"
 
@@ -114,7 +114,7 @@ exports.deploy = (options) ->
     # for each html file
     Q.all html.map (file) ->
 
-      clientPutFile("tmp/" + file, "/" + file)
+      clientPutFile("tmp/" + file, "/" + file, { 'x-amz-acl': 'public-read' })
 
       # print the completion message
       .then ->
