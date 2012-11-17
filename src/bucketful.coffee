@@ -43,10 +43,6 @@ exports.deploy = (options) ->
   console.log "Resolved targetDir", targetDir
   console.log "Loaded the following options", nconf.get 'bucketful'
 
-  console.log("Files to compile using opra:")
-  html.forEach (y) ->
-    console.log("*", y)
-
   client = knox.createClient
     key: aws_key
     secret: aws_secret
@@ -147,10 +143,22 @@ exports.deploy = (options) ->
 
 
 
-  # Run the two tracks at the same time
-  track1 = Q.all([compileTrack()]).then -> uploadOpraTrack()
-  track2 = Q.all([uploadTrack()])
+  # Run the main procedure
+  req = client.put '/.handshake',
+    'Content-Length': 6
+    'Content-Type': 'text/plain'
 
-  Q.all([track1, track2]).then ->
-    console.log "done"
-  .end()
+  req.on 'response', (res) ->
+    if res.statusCode != 200
+      console.log("Failed with status code", res.statusCode)
+    else
+      track1 = Q.all([compileTrack()]).then -> uploadOpraTrack()
+      track2 = Q.all([uploadTrack()])
+      Q.all([track1, track2]).then ->
+        console.log "done"
+      .fail ->
+        console.log "failed"
+        console.log arguments
+      .end()
+
+  req.end('oh hai')
