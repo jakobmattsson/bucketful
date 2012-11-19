@@ -36,5 +36,4 @@ if (argv.version) {
   return;
 }
 
-require('coffee-script')
 require('../lib/bucketful').deploy();
