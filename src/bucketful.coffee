@@ -87,12 +87,13 @@ exports.deploy = (options) ->
         includes.forEach (file) ->
           fullpath = path.join(targetDir, file)
           if powerfs.isDirectorySync(fullpath)
-            files = files.concat wrench.readdirSyncRecursive(fullpath).map (f) -> path.join file, f
+            files = files.concat wrench.readdirSyncRecursive(fullpath).filter((f) -> f[0] != '.').map (f) -> path.join file, f
           else
             files.push file
 
       else
         files = wrench.readdirSyncRecursive(targetDir)
+        files = files.filter (file) -> file.split('/').every (part) -> part[0] != '.' # exclude all hidden files
 
       files = files.map (x) -> { fullpath: path.join(targetDir, x), name: x }
       files
@@ -106,10 +107,6 @@ exports.deploy = (options) ->
     # Exclude directories
     .then (files) ->
       qfilter files, (file) -> powerfsIsFile file.fullpath
-
-    # Exclude hidden files
-    .then (files) ->
-      files.filter (file) -> file.name.split('/').every (part) -> part[0] != '.'
 
     # Exclude opra-processed files
     .then (files) ->
