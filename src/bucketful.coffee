@@ -192,16 +192,22 @@ exports.deploy = (options) ->
         console.log "Success: Upload access secured"
 
         console.log ""
-        console.log "STEP 4 - Compilation and upload"
-        console.log "==============================="
+        console.log "STEP 4 - Compilation"
+        console.log "===================="
 
-        track1 = Q.all([compileTrack()]).then -> uploadOpraTrack()
-        track2 = Q.all([uploadTrack()])
-        Q.all([track1, track2]).then ->
-          console.log "done"
+        compileTrack().then ->
 
           console.log ""
-          console.log "STEP 5 - Keeping you up to speed"
+          console.log "STEP 5 - Upload"
+          console.log "==============="
+
+          uploadOpraTrack()
+        .then ->
+          uploadTrack()
+        .then ->
+          console.log "done"
+          console.log ""
+          console.log "STEP 6 - Keeping you up to speed"
           console.log "================================"
           console.log "Site now available on: http://#{s3bucket}.s3-website-#{region}.amazonaws.com"
           console.log "If your DNS has been configured correctly, it can also be found here: http://#{s3bucket}"
