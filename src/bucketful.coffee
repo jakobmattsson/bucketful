@@ -114,7 +114,7 @@ exports.deploy = (options) ->
 
     # Upload the remaining files
     .then (files) ->
-      console.log "Uploading #{files.length} static files..."
+      console.log "Uploading #{files.length} static file(s)..."
       counter = 0
 
       Q.all files.map (file, i) ->
@@ -127,7 +127,7 @@ exports.deploy = (options) ->
   ## This functions manages the files that should be compiled by opra
   uploadOpraTrack = ->
     uploadCount = 0
-    console.log "Uploading #{html.length} opra files..."
+    console.log "Uploading #{html.length} opra file(s)..."
 
     # for each html file
     Q.all html.map (file) ->
@@ -144,7 +144,7 @@ exports.deploy = (options) ->
   ## This functions manages the files that should be compiled by opra
   compileTrack = ->
     compileCount = 0
-    console.log "Compiling #{html.length} opra files..."
+    console.log "Compiling #{html.length} opra file(s)..."
 
     # for each html file
     Q.all html.map (file) ->
