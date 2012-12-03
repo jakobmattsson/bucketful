@@ -13,7 +13,7 @@ exports.createBucket = (s3, params, callback) ->
   name = params.name
   fullRightsUser = params.fullRightsUser
 
-  s3.CreateBucket { BucketName : name, GrantFullControl: 'emailAddress=' + fullRightsUser, GrantRead: 'uri=http://acs.amazonaws.com/groups/global/AllUsers' }, (err) ->
+  s3.CreateBucket { BucketName: name, GrantFullControl: 'emailAddress=' + fullRightsUser, GrantRead: 'uri=http://acs.amazonaws.com/groups/global/AllUsers' }, (err) ->
     callback(err?.Body?.Error?.Message || err)
 
 exports.bucketToWebsite = (s3, params, callback) ->

@@ -170,7 +170,7 @@ exports.deploy = (options) ->
       console.log "Success: Bucket found in the given account"
     else
       console.log "Warning: Bucket not found in the given account. Attempting to create it."
-      createBucket(s3, { name: s3bucket, fullRightsUser: 'signup@leanmachine.se' }).then ->
+      createBucket(s3, { name: s3bucket, fullRightsUser: aws_user }).then ->
         bucketToWebsite(s3, { name: s3bucket, index: siteIndex, error: siteError })
       .then ->
         console.log "Success: Bucket created!"
