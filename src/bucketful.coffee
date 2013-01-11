@@ -34,8 +34,6 @@ exports.deploy = (options) ->
     exclude: []
     websiteIndex: 'index.html'
     websiteError: 'index.html'
-    opra:
-      inline: true
 
   s3bucket    = nconf.get 'bucketful:bucket'
   aws_key     = nconf.get 'bucketful:key'

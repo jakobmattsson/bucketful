@@ -14,13 +14,16 @@ var argv = optimist
   .describe('bucketful:exclude', 'Files/folders to exclude from the upload')
   .describe('bucketful:websiteIndex', 'File to use as index for the site')
   .describe('bucketful:websiteError', 'File to use for error on the site')
+  .describe('bucketful:username', 'Username for the owner of the new bucket, if any')
   .describe('bucketful:region', 'Files/folders to include in the upload')
   .describe('bucketful:opra', 'Configuration arguments for opra')
+  .describe('bucketful:html', 'Files to process using opra')
   .describe('version', 'Print the current version number')
   .describe('help', 'Show this help message')
   .default('bucketful:targetDir', './public')
   .default('bucketful:websiteIndex', 'index.html')
   .default('bucketful:websiteError', 'index.html')
+  .default('bucketful:html', '[index.html]')
   .alias('version', 'v')
   .alias('help', 'h')
   .argv;
@@ -30,9 +33,7 @@ if (argv.help) {
   return;
 }
 if (argv.version) {
-  fs.readFile(path.join(__dirname, '../package.json'), 'utf8', function(err, data) {
-    console.log(err ? err : JSON.parse(data).version);
-  });
+  console.log(require('../package.json').version);
   return;
 }
 
