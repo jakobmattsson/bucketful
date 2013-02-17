@@ -7,7 +7,11 @@ exports.getBucketNames = (s3, callback) ->
     else if data.StatusCode != 200
       callback(new Error(data))
     else
-      callback(null, _.pluck(data.Body.ListAllMyBucketsResult.Buckets.Bucket, 'Name'))
+      bucketData = data.Body.ListAllMyBucketsResult.Buckets.Bucket
+      if Array.isArray(bucketData)
+        callback(null, _(bucketData).pluck('Name'))
+      else
+        callback(null, [bucketData.Name])
 
 exports.createBucket = (s3, params, callback) ->
   name = params.name
