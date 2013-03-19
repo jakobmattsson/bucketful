@@ -9,6 +9,7 @@ wrench = require 'wrench'
 powerfs = require 'powerfs'
 awssum = require 'awssum'
 awssumHelpers = require './awssum-helpers'
+AWS = require 'aws-sdk'
 
 S3 = awssum.load('amazon/s3').S3
 
@@ -65,6 +66,12 @@ exports.deploy = (options) ->
     secretAccessKey: aws_secret
     region: region
 
+  AWS.config.update
+    region: region
+    accessKeyId: aws_key
+    secretAccessKey: aws_secret
+  awsSdkS3 = new AWS.S3()
+
   opraBuild = Q.nbind(opra.build, opra)
   powerfsWriteFile = Q.nbind(powerfs.writeFile, powerfs)
   powerfsIsFile = Q.nbind(powerfs.isFile, powerfs)
@@ -72,7 +79,7 @@ exports.deploy = (options) ->
   getBucketNames = Q.nbind(awssumHelpers.getBucketNames)
   createBucket = Q.nbind(awssumHelpers.createBucket)
   bucketToWebsite = Q.nbind(awssumHelpers.bucketToWebsite)
-
+  giveEveryoneReadAccess = Q.nbind(awssumHelpers.giveEveryoneReadAccess)
 
 
   ## This functions handles the uploading of all static files (those not compiled by opra)
@@ -164,14 +171,22 @@ exports.deploy = (options) ->
   console.log "========================"
 
   getBucketNames(s3).then (buckets) ->
+
     if _(buckets).contains(s3bucket)
       console.log "Success: Bucket found in the given account"
     else
       console.log "Warning: Bucket not found in the given account. Attempting to create it."
-      createBucket(s3, { name: s3bucket, fullRightsUser: aws_user }).then ->
-        bucketToWebsite(s3, { name: s3bucket, index: siteIndex, error: siteError })
+      aws_user = "signup@leanmachine.se"
+
+      createBucket(awsSdkS3, { name: s3bucket, fullRightsUser: aws_user, key: aws_key, secret: aws_secret }).then ->
+        console.log "Bucket created. Configuring it as a website."
+        bucketToWebsite(awsSdkS3, { name: s3bucket, index: siteIndex, error: siteError })
+      .then ->
+        console.log "Setting READ access for everyone."
+        giveEveryoneReadAccess(awsSdkS3, { name: s3bucket })
       .then ->
         console.log "Success: Bucket created!"
+
   .then ->
 
     console.log ""

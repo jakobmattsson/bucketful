@@ -13,17 +13,44 @@ exports.getBucketNames = (s3, callback) ->
       else
         callback(null, [bucketData.Name])
 
-exports.createBucket = (s3, params, callback) ->
-  name = params.name
-  fullRightsUser = params.fullRightsUser
+exports.createBucket = (awsSdkS3, params, callback) ->
+  awsSdkS3.client.createBucket { Bucket: params.name }, callback
 
-  s3.CreateBucket { BucketName: name, GrantFullControl: 'emailAddress=' + fullRightsUser, GrantRead: 'uri=http://acs.amazonaws.com/groups/global/AllUsers' }, (err) ->
-    callback(err?.Body?.Error?.Message || err)
+exports.giveEveryoneReadAccess = (awsSdkS3, params, callback) ->
+  awsSdkS3.client.getBucketAcl {
+    Bucket: params.name
+  }, (err, res) ->
+    return callback(err) if err?
 
-exports.bucketToWebsite = (s3, params, callback) ->
-  name = params.name
+    pars = _.pick(res, 'Grants', 'Owner')
+
+    pars.Grants.push({
+      Permission: 'READ'
+      Grantee: {
+        URI: 'http://acs.amazonaws.com/groups/global/AllUsers'
+        Type: 'Group'
+      }
+    })
+
+    awsSdkS3.client.putBucketAcl {
+      Bucket: params.name
+      AccessControlPolicy: pars
+    }, callback
+
+
+exports.bucketToWebsite = (awsSdkS3, params, callback) ->
+
   index = params.index ? 'index.html'
   error = params.error ? index
 
-  s3.PutBucketWebsite { BucketName: name, website: true, IndexDocument: index, ErrorDocument: error, key: error }, (err) ->
-    callback(err?.Body?.Error?.Message || err)
+  awsSdkS3.client.putBucketWebsite {
+    Bucket: params.name
+    WebsiteConfiguration: {
+      IndexDocument: {
+        Suffix: index
+      }
+      ErrorDocument: {
+        Key : error
+      }
+    }
+  }, callback
