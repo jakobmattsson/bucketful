@@ -10,6 +10,8 @@ powerfs = require 'powerfs'
 awssum = require 'awssum'
 awssumHelpers = require './awssum-helpers'
 AWS = require 'aws-sdk'
+loopia = require 'loopia-api'
+loopiaTools = require './loopia'
 
 S3 = awssum.load('amazon/s3').S3
 
@@ -47,6 +49,7 @@ exports.deploy = (options) ->
   siteError   = nconf.get 'bucketful:websiteError'
   html        = nconf.get 'bucketful:html'
   opraOptions = nconf.get 'bucketful:opra'
+  loopiaOpts  = nconf.get 'loopia'
   targetDir   = path.resolve nconf.get 'bucketful:targetDir'
 
   console.log ""
@@ -71,6 +74,9 @@ exports.deploy = (options) ->
     accessKeyId: aws_key
     secretAccessKey: aws_secret
   awsSdkS3 = new AWS.S3()
+
+  if loopiaOpts && loopiaOpts.username && loopiaOpts.password
+    loopiaClient = loopia.createClient(loopiaOpts.username, loopiaOpts.password)
 
   opraBuild = Q.nbind(opra.build, opra)
   powerfsWriteFile = Q.nbind(powerfs.writeFile, powerfs)
@@ -188,6 +194,11 @@ exports.deploy = (options) ->
         console.log "Success: Bucket created!"
 
   .then ->
+    if loopiaClient?
+      console.log "setting up cname for bucket"
+      cname = "#{s3bucket}.s3-website-#{region}.amazonaws.com"
+      Q.nfcall(loopiaTools.putSubdomainCNAME, loopiaClient, s3bucket, cname)
+  .then ->
 
     console.log ""
     console.log "STEP 3 - Accessing bucket"
@@ -230,11 +241,11 @@ exports.deploy = (options) ->
           console.log ""
           console.log "FAILED MISERABLY!"
           console.log err
-        .end()
+        .done()
 
     req.end('oh hai')
   .fail (err) ->
     console.log ""
     console.log "FAILED MISERABLY!"
     console.log err
-  .end()
+  .done()
