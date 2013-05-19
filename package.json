@@ -5,7 +5,7 @@
   "bin": {
     "bucketful": "./bin/bucketful"
   },
-  "version": "0.10.22",
+  "version": "0.10.1",
   "author": "Jakob Mattsson <jakob.mattsson@gmail.com> (jakobmattsson.se)",
   "repository": {
     "type": "git",
@@ -15,6 +15,7 @@
     "node": ">=0.6.0"
   },
   "dependencies": {
+    "loopia-api": "0.1.4",
     "aws-sdk": "0.9.7-pre.8",
     "opra": ">=0.12",
     "powerfs": "0.2.3",
