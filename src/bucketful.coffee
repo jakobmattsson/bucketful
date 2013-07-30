@@ -1,7 +1,7 @@
 Q = require 'q'
 _ = require 'underscore'
 _s = require 'underscore.string'
-opra = require 'opra'
+opra = try require 'opra'
 knox = require 'knox'
 path = require 'path'
 nconf = require 'nconf'
@@ -24,6 +24,11 @@ qfilter = (list, callback) ->
     list.filter (x, i) -> mask[i]
 
 exports.deploy = (options) ->
+
+  if !opra
+    console.log("Could not find opra.")
+    console.log("Install it using npm before using bucketful!")
+    return
 
   nconf.overrides(options).argv()
   nconf.file "config", "config.json"
