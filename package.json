@@ -5,7 +5,7 @@
   "bin": {
     "bucketful": "./bin/bucketful"
   },
-  "version": "0.10.3",
+  "version": "0.10.4",
   "author": "Jakob Mattsson <jakob.mattsson@gmail.com> (jakobmattsson.se)",
   "repository": {
     "type": "git",
