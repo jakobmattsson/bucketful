@@ -36,7 +36,7 @@ exports.giveEveryoneReadAccess = (s3client, {name}, callback) ->
         URI: 'http://acs.amazonaws.com/groups/global/AllUsers'
         Type: 'Group'
 
-    awsSdkS3.client.putBucketAcl
+    s3client.putBucketAcl
       Bucket: name
       AccessControlPolicy: pars
     , callback
