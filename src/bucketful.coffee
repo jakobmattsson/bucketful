@@ -11,9 +11,10 @@ exports.deploy = (options) ->
   nconf.overrides(options).argv()
   nconf.file "config", "config.json"
   nconf.file "package", "package.json"
+  nconf.env('__')
   nconf.file "user", path.join(process.env.HOME, ".bucketful")
 
-  nconf.env().defaults bucketful:
+  nconf.defaults bucketful:
     targetDir: path.join(process.cwd(), "public")
     websiteIndex: 'index.html'
     websiteError: 'index.html'
