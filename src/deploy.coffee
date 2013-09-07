@@ -37,48 +37,50 @@ module.exports = (options, callback = ->) ->
   log = (args...) ->
     output.write(args.join(' ') + '\n') if output?
 
+  targetDir = path.resolve(targetDir)
+
   log ""
-  log "STEP 1 - Loading settings??"
-  log "========================="
-  log "Loaded the following options", options
-  log "Resolved targetDir", targetDir
+  log "Loading settings"
+  log "- bucket: #{s3bucket}"
+  log "- aws key: #{aws_key.slice(0, 4)}#{_.times(aws_key.length-4, -> '*').join('')}"
+  log "- aws secret: #{aws_secret.slice(0, 4)}#{_.times(aws_secret.length-4, -> '*').join('')}"
+  log "- aws region: #{region}"
+  log "- index: #{siteIndex}"
+  log "- error: #{siteError}"
+  log "- targetDir: #{targetDir}"
 
   powerfsIsFile = Q.nbind(powerfs.isFile, powerfs)
 
   aws = awsClient(createAwsClient({ region, key: aws_key, secret: aws_secret }))
 
 
-  log ""
-  log "STEP 2 - Locating bucket"
-  log "========================"
 
   aws.getBucketNames().then (buckets) ->
 
+    log ""
     if _(buckets).contains(s3bucket)
-      log "Success: Bucket found in the given account"
+      log "Bucket found in the given aws account."
     else
-      log "Warning: Bucket not found in the given account. Attempting to create it."
+      log "Bucket not found in the given account. Attempting to create it."
 
       aws.createBucket(s3bucket).then ->
         log "Bucket created. Configuring it as a website."
         aws.bucketToWebsite({ name: s3bucket, index: siteIndex, error: siteError })
       .then ->
-        log "Setting READ access for everyone."
+        log "Setting read access for everyone."
         aws.giveEveryoneReadAccess(s3bucket)
-      .then ->
-        log "Success: Bucket created!"
 
   .then ->
     if dnsProvider?
-      log "setting up cname for bucket"  # detta borde göras parallelt med uppladdningen
+      log()
+      log "Configuring DNS at #{dnsProvider.namespace}."  # detta borde göras parallelt med uppladdningen
       cname = "#{s3bucket}.s3-website-#{region}.amazonaws.com"
       Q.nfcall(dnsProvider.setCNAME, s3bucket, cname)
 
   .then ->
 
     log()
-    log "STEP #3 - Upload"
-    log "================"
+    log "Uploading:"
 
     wrench.readdirSyncRecursive(targetDir).map (x) -> { fullpath: path.join(targetDir, x), name: x }
 
@@ -101,13 +103,11 @@ module.exports = (options, callback = ->) ->
         log "[#{counterStr}/#{files.length}] #{file.name}"
 
   .then ->
-    log "done"
     log ""
-    log "STEP 4 - Keeping you up to speed"
-    log "================================"
     log "Site now available on: http://#{s3bucket}.s3-website-#{region}.amazonaws.com"
-    log "If your DNS has been configured correctly, it can also be found here: http://#{s3bucket}"
-    log ""
-    log "kthxbai"
+    if dnsProvider?
+      log "DNS configured to (eventually) make it available at: http://#{s3bucket}"
+    else
+      log "No DNS configured."
 
   .nodeify(callback)

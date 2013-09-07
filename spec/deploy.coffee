@@ -1,3 +1,4 @@
+path = require 'path'
 sinon = require 'sinon'
 fs = require 'fs'
 _ = require 'underscore'
@@ -59,6 +60,7 @@ describe 'deploy', ->
       { @listBuckets, @createBucket, @putBucketWebsite, @getBucketAcl, @putBucketAcl, @putObject }
 
     @mockDns = {
+      namespace: 'fakedns'
       setCNAME: (bucket, cname, callback) ->
         popOne('setCNAME', arguments)
         callback()
@@ -291,7 +293,55 @@ describe 'deploy', ->
 
 
 
-  it 'prints stuff if a stream is given', (done) ->
+  it 'prints the right stuff when the bucket already exists', (done) ->
+
+    output = stringstream.createStream()
+
+    @listBuckets = override @listBuckets, (base, opts, callback) =>
+      base opts, ->
+        callback(null, { Buckets: [{ Name: 'mybucket.leanmachine.se' }] })
+
+    deploy
+      s3bucket: 'mybucket.leanmachine.se'
+      aws_key: 'awskey'
+      aws_secret: 'awssecret'
+      region: 'eu-west-1'
+      siteIndex: 'index.html'
+      siteError: 'error.html'
+      targetDir: 'spec/data'
+      output: output
+      createAwsClient: @mockAws
+    , (err) =>
+      should.not.exist err
+      output.toString().should.eql """
+
+
+        Loading settings
+        - bucket: mybucket.leanmachine.se
+        - aws key: awsk**
+        - aws secret: awss*****
+        - aws region: eu-west-1
+        - index: index.html
+        - error: error.html
+        - targetDir: #{path.resolve(__dirname, 'data')}
+
+        Bucket found in the given aws account.
+
+        Uploading:
+        [1/2] file.txt
+        [2/2] other.coffee
+
+        Site now available on: http://mybucket.leanmachine.se.s3-website-eu-west-1.amazonaws.com
+        No DNS configured.
+
+      """
+      done()
+
+
+
+
+
+  it 'prints the right stuff when the bucket must be created', (done) ->
 
     output = stringstream.createStream()
 
@@ -307,7 +357,79 @@ describe 'deploy', ->
       createAwsClient: @mockAws
     , (err) =>
       should.not.exist err
-      output.toString().length.should.be.above 100
+      output.toString().should.eql """
+
+
+        Loading settings
+        - bucket: mybucket.leanmachine.se
+        - aws key: awsk**
+        - aws secret: awss*****
+        - aws region: eu-west-1
+        - index: index.html
+        - error: error.html
+        - targetDir: #{path.resolve(__dirname, 'data')}
+
+        Bucket not found in the given account. Attempting to create it.
+        Bucket created. Configuring it as a website.
+        Setting read access for everyone.
+
+        Uploading:
+        [1/2] file.txt
+        [2/2] other.coffee
+
+        Site now available on: http://mybucket.leanmachine.se.s3-website-eu-west-1.amazonaws.com
+        No DNS configured.
+
+      """
+      done()
+
+
+
+
+
+  it 'prints the right stuff when a dns provider is given', (done) ->
+
+    output = stringstream.createStream()
+
+    deploy
+      s3bucket: 'mybucket.leanmachine.se'
+      aws_key: 'awskey'
+      aws_secret: 'awssecret'
+      region: 'eu-west-1'
+      siteIndex: 'index.html'
+      siteError: 'error.html'
+      targetDir: 'spec/data'
+      output: output
+      createAwsClient: @mockAws
+      dnsProvider: @mockDns
+    , (err) =>
+      should.not.exist err
+      output.toString().should.eql """
+
+
+        Loading settings
+        - bucket: mybucket.leanmachine.se
+        - aws key: awsk**
+        - aws secret: awss*****
+        - aws region: eu-west-1
+        - index: index.html
+        - error: error.html
+        - targetDir: #{path.resolve(__dirname, 'data')}
+
+        Bucket not found in the given account. Attempting to create it.
+        Bucket created. Configuring it as a website.
+        Setting read access for everyone.
+
+        Configuring DNS at fakedns.
+
+        Uploading:
+        [1/2] file.txt
+        [2/2] other.coffee
+
+        Site now available on: http://mybucket.leanmachine.se.s3-website-eu-west-1.amazonaws.com
+        DNS configured to (eventually) make it available at: http://mybucket.leanmachine.se
+
+      """
       done()
 
 

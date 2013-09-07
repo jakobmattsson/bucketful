@@ -1,7 +1,6 @@
-* Instead of mixing textual output and logic, provide hooks for when certain events happen
-* Properly extract the loopia-plugin
 * Get a little closer to 100% test coverage
 * Fix hardcoded dnsResolver (both in source and test)
+* Properly extract the loopia-plugin
 
 
 Future stuff:
