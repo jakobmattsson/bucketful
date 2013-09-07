@@ -21,8 +21,6 @@ qfilter = (list, filterFunc) ->
 
 module.exports = (options, callback = ->) ->
 
-  callbackOnce = _.once(callback)
-
   {
     output
     createAwsClient
@@ -37,8 +35,7 @@ module.exports = (options, callback = ->) ->
   } = options
 
   log = (args...) ->
-    str = args.join(' ')
-    output.write(str + '\n') if output?
+    output.write(args.join(' ') + '\n') if output?
 
   log ""
   log "STEP 1 - Loading settings??"
@@ -73,7 +70,7 @@ module.exports = (options, callback = ->) ->
 
   .then ->
     if dnsProvider?
-      log "setting up cname for bucket"
+      log "setting up cname for bucket"  # detta borde göras parallelt med uppladdningen
       cname = "#{s3bucket}.s3-website-#{region}.amazonaws.com"
       Q.nfcall(dnsProvider.setCNAME, s3bucket, cname)
 
@@ -113,14 +110,4 @@ module.exports = (options, callback = ->) ->
     log ""
     log "kthxbai"
 
-
-  .fail (err) ->
-    log ""
-    log "FAILED MISERABLY!"
-    log err
-    callbackOnce(err)
-
-  .then ->
-    callbackOnce()
-
-  .done()
+  .nodeify(callback)

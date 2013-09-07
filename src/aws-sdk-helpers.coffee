@@ -13,7 +13,6 @@ exports.putFile = (s3client, {filename, target, bucket}, callback) ->
     Body: fs.readFileSync(filename)
   , callback
 
-
 exports.getBucketNames = (s3client, callback) ->
   s3client.listBuckets { }, propagate callback, ({ Buckets }) ->
     callback(null, _.pluck(Buckets, 'Name'))
@@ -38,7 +37,6 @@ exports.giveEveryoneReadAccess = (s3client, name, callback) ->
       Bucket: name
       AccessControlPolicy: pars
     , callback
-
 
 exports.bucketToWebsite = (s3client, {index, error, name}, callback) ->
 

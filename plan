@@ -1,9 +1,10 @@
 * Instead of mixing textual output and logic, provide hooks for when certain events happen
 * Properly extract the loopia-plugin
-* Reach 100% test coverage
-* Extract the reading of settings into a file of it's own and test it
-
+* Get a little closer to 100% test coverage
+* Fix hardcoded dnsResolver (both in source and test)
 
 
 Future stuff:
 * Log total progress of uploads with respect to filesize (streaming?)
+* Improve the logging messages in general
+* Use colors in the text logging
