@@ -1,6 +1,6 @@
 should = require 'should'
 jscov = require 'jscov'
-loopia = require jscov.cover('..', 'src', 'loopia')
+loopia = require jscov.cover('..', 'src', 'bucketful-loopia')
 
 describe 'Loopia', ->
 

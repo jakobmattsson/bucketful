@@ -45,13 +45,15 @@ exports.deploy = (options) ->
     siteError
     loopiaOpts
     targetDir
+    output: process.stdout
     verbose: true
     dnsProvider: dnsObject
     createAwsClient: (region, key, secret) ->
-      AWS.config.update
+      AWS.config.update({
         region: region
         accessKeyId: key
         secretAccessKey: secret
+      })
       new AWS.S3().client
   }, ->
     console.log("calling back", arguments)

@@ -24,6 +24,7 @@ module.exports = (options, callback = ->) ->
   callbackOnce = _.once(callback)
 
   {
+    output
     createAwsClient
     dnsProvider
     s3bucket
@@ -34,10 +35,11 @@ module.exports = (options, callback = ->) ->
     siteIndex
     siteError
     targetDir
-    verbose
   } = options
 
-  log = -> console.log.apply(console, arguments) if verbose
+  log = (args...) ->
+    str = args.join(' ')
+    output.write(str + '\n') if output?
 
   log ""
   log "STEP 1 - Loading settings??"
@@ -78,7 +80,7 @@ module.exports = (options, callback = ->) ->
 
   .then ->
 
-    log ""
+    log()
     log "STEP #3 - Upload"
     log "================"
 
