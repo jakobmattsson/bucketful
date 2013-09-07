@@ -1,5 +1,6 @@
 path = require 'path'
 nconf = require 'nconf'
+AWS = require 'aws-sdk'
 deploy = require './deploy'
 
 process.on 'uncaughtException', ->
@@ -26,8 +27,13 @@ exports.deploy = (options) ->
   region      = nconf.get 'bucketful:region'
   siteIndex   = nconf.get 'bucketful:websiteIndex'
   siteError   = nconf.get 'bucketful:websiteError'
-  loopiaOpts  = nconf.get 'loopia'
+  dnsProvider = nconf.get 'bucketful:dnsProvider'
   targetDir   = path.resolve nconf.get 'bucketful:targetDir'
+
+  #dnsObject = require('../../' + dnsProvider) if dnsProvider
+  if dnsProvider == 'bucketful-loopia'
+    dep = require('./bucketful-loopia')
+    dnsObject = dep.create('username', 'password') # get username and password from the given namespace
 
   deploy {
     s3bucket
@@ -40,5 +46,12 @@ exports.deploy = (options) ->
     loopiaOpts
     targetDir
     verbose: true
+    dnsProvider: dnsObject
+    createAwsClient: (region, key, secret) ->
+      AWS.config.update
+        region: region
+        accessKeyId: key
+        secretAccessKey: secret
+      new AWS.S3().client
   }, ->
     console.log("calling back", arguments)

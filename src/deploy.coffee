@@ -3,10 +3,9 @@ _ = require 'underscore'
 path = require 'path'
 wrench = require 'wrench'
 powerfs = require 'powerfs'
+
 awsClient = require './aws-client'
 
-loopia = require 'loopia-api'
-loopiaTools = require './loopia'
 
 
 
@@ -25,6 +24,8 @@ module.exports = (options, callback = ->) ->
   callbackOnce = _.once(callback)
 
   {
+    createAwsClient
+    dnsProvider
     s3bucket
     aws_key
     aws_secret
@@ -32,7 +33,6 @@ module.exports = (options, callback = ->) ->
     region
     siteIndex
     siteError
-    loopiaOpts
     targetDir
     verbose
   } = options
@@ -45,13 +45,9 @@ module.exports = (options, callback = ->) ->
   log "Loaded the following options", options
   log "Resolved targetDir", targetDir
 
-  if loopiaOpts && loopiaOpts.username && loopiaOpts.password
-    loopiaClient = loopia.createClient(loopiaOpts.username, loopiaOpts.password)
-
   powerfsIsFile = Q.nbind(powerfs.isFile, powerfs)
 
-  aws = awsClient({ region, aws_key, aws_secret })
-
+  aws = awsClient(createAwsClient({ region, key: aws_key, secret: aws_secret }))
 
 
   log ""
@@ -75,10 +71,10 @@ module.exports = (options, callback = ->) ->
         log "Success: Bucket created!"
 
   .then ->
-    if loopiaClient?
+    if dnsProvider?
       log "setting up cname for bucket"
       cname = "#{s3bucket}.s3-website-#{region}.amazonaws.com"
-      Q.nfcall(loopiaTools.putSubdomainCNAME, loopiaClient, s3bucket, cname)
+      Q.nfcall(dnsProvider.setCNAME, s3bucket, cname)
 
   .then ->
 
