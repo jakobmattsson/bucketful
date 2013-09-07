@@ -30,7 +30,6 @@ module.exports = (options, callback = ->) ->
     s3bucket
     aws_key
     aws_secret
-    aws_user
     region
     siteIndex
     siteError
@@ -63,12 +62,12 @@ module.exports = (options, callback = ->) ->
     else
       log "Warning: Bucket not found in the given account. Attempting to create it."
 
-      aws.createBucket({ name: s3bucket, fullRightsUser: aws_user, key: aws_key, secret: aws_secret }).then ->
+      aws.createBucket(s3bucket).then ->
         log "Bucket created. Configuring it as a website."
         aws.bucketToWebsite({ name: s3bucket, index: siteIndex, error: siteError })
       .then ->
         log "Setting READ access for everyone."
-        aws.giveEveryoneReadAccess({ name: s3bucket })
+        aws.giveEveryoneReadAccess(s3bucket)
       .then ->
         log "Success: Bucket created!"
 

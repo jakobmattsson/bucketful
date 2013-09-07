@@ -2,3 +2,8 @@
 * Properly extract the loopia-plugin
 * Reach 100% test coverage
 * Extract the reading of settings into a file of it's own and test it
+
+
+
+Future stuff:
+* Log total progress of uploads with respect to filesize (streaming?)

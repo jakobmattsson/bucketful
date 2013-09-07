@@ -140,7 +140,6 @@ describe 'deploy', ->
       s3bucket: 'mybucket.leanmachine.se'
       aws_key: 'awskey'
       aws_secret: 'awssecret'
-      aws_user: 'myawsuser'
       region: 'eu-west-1'
       siteIndex: 'index.html'
       siteError: 'error.html'
@@ -225,7 +224,6 @@ describe 'deploy', ->
       s3bucket: 'mybucket.leanmachine.se'
       aws_key: 'awskey'
       aws_secret: 'awssecret'
-      aws_user: 'myawsuser'
       region: 'eu-west-1'
       siteIndex: 'index.html'
       siteError: 'error.html'
@@ -279,7 +277,6 @@ describe 'deploy', ->
       s3bucket: 'mybucket.leanmachine.se'
       aws_key: 'awskey'
       aws_secret: 'awssecret'
-      aws_user: 'myawsuser'
       region: 'eu-west-1'
       siteIndex: 'index.html'
       siteError: 'error.html'
@@ -302,7 +299,6 @@ describe 'deploy', ->
       s3bucket: 'mybucket.leanmachine.se'
       aws_key: 'awskey'
       aws_secret: 'awssecret'
-      aws_user: 'myawsuser'
       region: 'eu-west-1'
       siteIndex: 'index.html'
       siteError: 'error.html'
@@ -312,4 +308,25 @@ describe 'deploy', ->
     , (err) =>
       should.not.exist err
       output.toString().length.should.be.above 100
+      done()
+
+
+
+
+
+  it 'propagates errors properly', (done) ->
+
+    @listBuckets = (opts, callback) -> callback(new Error("cannot list buckets"))
+
+    deploy
+      s3bucket: 'mybucket.leanmachine.se'
+      aws_key: 'awskey'
+      aws_secret: 'awssecret'
+      region: 'eu-west-1'
+      siteIndex: 'index.html'
+      siteError: 'error.html'
+      targetDir: 'spec/data'
+      createAwsClient: @mockAws
+    , (err) =>
+      err.message.should.eql 'cannot list buckets'
       done()
