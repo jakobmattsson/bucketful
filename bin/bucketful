@@ -3,6 +3,8 @@
 var fs = require('fs');
 var path = require('path');
 var optimist = require('optimist');
+var bucketful = require('../lib/bucketful');
+var _ = require('underscore');
 
 var argv = optimist
   .usage('Preprocesses files using opra and uploads them to S3')
@@ -10,20 +12,13 @@ var argv = optimist
   .describe('bucketful:bucket', 'S3 bucket used as target for the upload')
   .describe('bucketful:key', 'AWS access key')
   .describe('bucketful:secret', 'AWS access secret')
-  .describe('bucketful:include', 'Files/folders to include in the upload')
-  .describe('bucketful:exclude', 'Files/folders to exclude from the upload')
   .describe('bucketful:websiteIndex', 'File to use as index for the site')
   .describe('bucketful:websiteError', 'File to use for error on the site')
-  .describe('bucketful:username', 'Username for the owner of the new bucket, if any')
   .describe('bucketful:region', 'Files/folders to include in the upload')
-  .describe('bucketful:opra', 'Configuration arguments for opra')
-  .describe('bucketful:html', 'Files to process using opra')
   .describe('version', 'Print the current version number')
   .describe('help', 'Show this help message')
-  .default('bucketful:targetDir', './public')
   .default('bucketful:websiteIndex', 'index.html')
   .default('bucketful:websiteError', 'index.html')
-  .default('bucketful:html', '[index.html]')
   .alias('version', 'v')
   .alias('help', 'h')
   .argv;
@@ -37,4 +32,21 @@ if (argv.version) {
   return;
 }
 
-require('../lib/bucketful').deploy();
+process.on('uncaughtException', function() {
+  console.log("uncaught exception");
+  console.log(arguments);
+});
+
+var conf = bucketful.load();
+
+bucketful.deploy(_.extend({}, conf, {
+  output: process.stdout
+}), function(err) {
+  console.log();
+  if (err) {
+    console.log(err);
+    process.exit(1);
+  } else {
+    console.log("over and out");
+  }
+});

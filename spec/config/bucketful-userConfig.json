@@ -1,0 +1,9 @@
+{
+  "bucketful": {
+    "dnsProvider": "myProvider",
+    "region": "eu-west-1"
+  },
+  "someplugin": {
+    "username": "daName"
+  }
+}

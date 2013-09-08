@@ -2,6 +2,8 @@ fs = require 'fs'
 mime = require 'mime'
 _ = require 'underscore'
 
+propagate = (onErr, onSucc) -> (err, rest...) -> if err? then onErr(err) else onSucc(rest...)
+
 exports.putFile = (s3client, {filename, target, bucket}, callback) ->
   s3client.putObject
     ACL: 'public-read'
@@ -11,23 +13,18 @@ exports.putFile = (s3client, {filename, target, bucket}, callback) ->
     Body: fs.readFileSync(filename)
   , callback
 
-
 exports.getBucketNames = (s3client, callback) ->
-  s3client.listBuckets { }, (err, { Buckets }) ->
-    return callback(err) if err?
-    bucketNames = Buckets.map (x) -> x.Name
-    callback(null, bucketNames)
+  s3client.listBuckets { }, propagate callback, ({ Buckets }) ->
+    callback(null, _.pluck(Buckets, 'Name'))
 
-exports.createBucket = (s3client, {name}, callback) ->
+exports.createBucket = (s3client, name, callback) ->
   s3client.createBucket { Bucket: name }, callback
 
-exports.giveEveryoneReadAccess = (s3client, {name}, callback) ->
+exports.giveEveryoneReadAccess = (s3client, name, callback) ->
 
   s3client.getBucketAcl
     Bucket: name
-  , (err, res) ->
-    return callback(err) if err?
-
+  , propagate callback, (res) ->
     pars = _.pick(res, 'Grants', 'Owner')
 
     pars.Grants.push
@@ -40,7 +37,6 @@ exports.giveEveryoneReadAccess = (s3client, {name}, callback) ->
       Bucket: name
       AccessControlPolicy: pars
     , callback
-
 
 exports.bucketToWebsite = (s3client, {index, error, name}, callback) ->
 

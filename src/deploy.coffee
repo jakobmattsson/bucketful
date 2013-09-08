@@ -3,10 +3,9 @@ _ = require 'underscore'
 path = require 'path'
 wrench = require 'wrench'
 powerfs = require 'powerfs'
+
 awsClient = require './aws-client'
 
-loopia = require 'loopia-api'
-loopiaTools = require './loopia'
 
 
 
@@ -17,74 +16,70 @@ qfilter = (list, filterFunc) ->
 
 
 
- 
 
+maskString = (str) -> str.slice(0, 4) + _.times(str.length-4, -> '*').join('')
 
 module.exports = (options, callback = ->) ->
 
-  callbackOnce = _.once(callback)
-
   {
+    output
+    createAwsClient
+    dnsProvider
     s3bucket
     aws_key
     aws_secret
-    aws_user
     region
     siteIndex
     siteError
-    loopiaOpts
     targetDir
-    verbose
   } = options
 
-  log = -> console.log.apply(console, arguments) if verbose
+  log = (args...) -> output.write(args.join(' ') + '\n') if output?
 
-  log ""
-  log "STEP 1 - Loading settings??"
-  log "========================="
-  log "Loaded the following options", options
-  log "Resolved targetDir", targetDir
-
-  if loopiaOpts && loopiaOpts.username && loopiaOpts.password
-    loopiaClient = loopia.createClient(loopiaOpts.username, loopiaOpts.password)
+  targetDir = path.resolve(targetDir)
 
   powerfsIsFile = Q.nbind(powerfs.isFile, powerfs)
 
-  aws = awsClient({ region, aws_key, aws_secret })
+  aws = awsClient(createAwsClient({ region, key: aws_key, secret: aws_secret }))
 
-
+  maskedKey = maskString(aws_key)
+  maskedSecret = maskString(aws_secret)
 
   log ""
-  log "STEP 2 - Locating bucket"
-  log "========================"
+  log "Accessing aws account using key #{maskedKey} and secret #{maskedSecret}."
 
   aws.getBucketNames().then (buckets) ->
 
     if _(buckets).contains(s3bucket)
-      log "Success: Bucket found in the given account"
+      log "Bucket #{s3bucket} found in the region #{region}."
     else
-      log "Warning: Bucket not found in the given account. Attempting to create it."
+      log "Bucket #{s3bucket } not found in the given account."
+      log "Attempting to create it in the region #{region}."
 
-      aws.createBucket({ name: s3bucket, fullRightsUser: aws_user, key: aws_key, secret: aws_secret }).then ->
-        log "Bucket created. Configuring it as a website."
+      aws.createBucket(s3bucket).then ->
+        log "Bucket created."
+        log "Setting website config using #{siteIndex} as index and #{siteError} as error."
         aws.bucketToWebsite({ name: s3bucket, index: siteIndex, error: siteError })
       .then ->
-        log "Setting READ access for everyone."
-        aws.giveEveryoneReadAccess({ name: s3bucket })
-      .then ->
-        log "Success: Bucket created!"
+        log "Setting read access for everyone."
+        aws.giveEveryoneReadAccess(s3bucket)
 
   .then ->
-    if loopiaClient?
-      log "setting up cname for bucket"
-      cname = "#{s3bucket}.s3-website-#{region}.amazonaws.com"
-      Q.nfcall(loopiaTools.putSubdomainCNAME, loopiaClient, s3bucket, cname)
+    if dnsProvider?
+      
+      if dnsProvider.username? && dnsProvider.password?
+        log()
+        log "Configuring DNS at #{dnsProvider.namespace} with username #{maskString(dnsProvider.username)} and password #{maskString(dnsProvider.password)}."
+        cname = "#{s3bucket}.s3-website-#{region}.amazonaws.com"
+        Q.nfcall(dnsProvider.setCNAME, s3bucket, cname)
+      else
+        log()
+        log "WARNING: Provided domain registrar, but not username/password"
 
   .then ->
 
-    log ""
-    log "STEP #3 - Upload"
-    log "================"
+    log()
+    log "Uploading #{targetDir}:"
 
     wrench.readdirSyncRecursive(targetDir).map (x) -> { fullpath: path.join(targetDir, x), name: x }
 
@@ -107,23 +102,11 @@ module.exports = (options, callback = ->) ->
         log "[#{counterStr}/#{files.length}] #{file.name}"
 
   .then ->
-    log "done"
     log ""
-    log "STEP 4 - Keeping you up to speed"
-    log "================================"
     log "Site now available on: http://#{s3bucket}.s3-website-#{region}.amazonaws.com"
-    log "If your DNS has been configured correctly, it can also be found here: http://#{s3bucket}"
-    log ""
-    log "kthxbai"
+    if dnsProvider?.username? && dnsProvider?.password?
+      log "DNS configured to also make it available at: http://#{s3bucket}"
+    else
+      log "No DNS configured."
 
-
-  .fail (err) ->
-    log ""
-    log "FAILED MISERABLY!"
-    log err
-    callbackOnce(err)
-
-  .then ->
-    callbackOnce()
-
-  .done()
+  .nodeify(callback)
