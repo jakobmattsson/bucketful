@@ -1,6 +1,6 @@
 {
   "name": "bucketful",
-  "description": "Deploys opra-apps to S3 buckets",
+  "description": "Deploys websites to Amazon S3",
   "main": "./lib/bucketful.js",
   "bin": {
     "bucketful": "./bin/bucketful"

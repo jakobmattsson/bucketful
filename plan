@@ -1,9 +1,0 @@
-* Get a little closer to 100% test coverage
-
-* Hur gör man ett test på allra högsta nivån, av bin-filen?
-
-
-Future stuff:
-* Log total progress of uploads with respect to filesize (streaming?)
-* Improve the logging messages in general
-* Use colors in the text logging (to highlight the configed parts when printing)
