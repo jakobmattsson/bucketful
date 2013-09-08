@@ -4,6 +4,7 @@ var fs = require('fs');
 var path = require('path');
 var optimist = require('optimist');
 var bucketful = require('../lib/bucketful');
+var _ = require('underscore');
 
 var argv = optimist
   .usage('Preprocesses files using opra and uploads them to S3')
@@ -32,13 +33,20 @@ if (argv.version) {
 }
 
 process.on('uncaughtException', function() {
-  console.log("uncaught");
+  console.log("uncaught exception");
   console.log(arguments);
 });
 
-var conf = bucketful.load({
+var conf = bucketful.load();
+
+bucketful.deploy(_.extend({}, conf, {
   output: process.stdout
-});
-bucketful.deploy(conf, function() {
-  console.log("over and done")
+}), function(err) {
+  console.log();
+  if (err) {
+    console.log(err);
+    process.exit(1);
+  } else {
+    console.log("over and out");
+  }
 });

@@ -1,5 +1,4 @@
 path = require 'path'
-sinon = require 'sinon'
 fs = require 'fs'
 _ = require 'underscore'
 should = require 'should'
@@ -60,6 +59,8 @@ describe 'deploy', ->
       { @listBuckets, @createBucket, @putBucketWebsite, @getBucketAcl, @putBucketAcl, @putObject }
 
     @mockDns = {
+      username: 'dnsuser'
+      password: 'dnspassword'
       namespace: 'fakedns'
       setCNAME: (bucket, cname, callback) ->
         popOne('setCNAME', arguments)
@@ -316,18 +317,10 @@ describe 'deploy', ->
       output.toString().should.eql """
 
 
-        Loading settings
-        - bucket: mybucket.leanmachine.se
-        - aws key: awsk**
-        - aws secret: awss*****
-        - aws region: eu-west-1
-        - index: index.html
-        - error: error.html
-        - targetDir: #{path.resolve(__dirname, 'data')}
+        Accessing aws account using key awsk** and secret awss*****.
+        Bucket mybucket.leanmachine.se found in the region eu-west-1.
 
-        Bucket found in the given aws account.
-
-        Uploading:
+        Uploading #{path.resolve(__dirname, 'data')}:
         [1/2] file.txt
         [2/2] other.coffee
 
@@ -360,20 +353,14 @@ describe 'deploy', ->
       output.toString().should.eql """
 
 
-        Loading settings
-        - bucket: mybucket.leanmachine.se
-        - aws key: awsk**
-        - aws secret: awss*****
-        - aws region: eu-west-1
-        - index: index.html
-        - error: error.html
-        - targetDir: #{path.resolve(__dirname, 'data')}
-
-        Bucket not found in the given account. Attempting to create it.
-        Bucket created. Configuring it as a website.
+        Accessing aws account using key awsk** and secret awss*****.
+        Bucket mybucket.leanmachine.se not found in the given account.
+        Attempting to create it in the region eu-west-1.
+        Bucket created.
+        Setting website config using index.html as index and error.html as error.
         Setting read access for everyone.
 
-        Uploading:
+        Uploading #{path.resolve(__dirname, 'data')}:
         [1/2] file.txt
         [2/2] other.coffee
 
@@ -407,27 +394,21 @@ describe 'deploy', ->
       output.toString().should.eql """
 
 
-        Loading settings
-        - bucket: mybucket.leanmachine.se
-        - aws key: awsk**
-        - aws secret: awss*****
-        - aws region: eu-west-1
-        - index: index.html
-        - error: error.html
-        - targetDir: #{path.resolve(__dirname, 'data')}
-
-        Bucket not found in the given account. Attempting to create it.
-        Bucket created. Configuring it as a website.
+        Accessing aws account using key awsk** and secret awss*****.
+        Bucket mybucket.leanmachine.se not found in the given account.
+        Attempting to create it in the region eu-west-1.
+        Bucket created.
+        Setting website config using index.html as index and error.html as error.
         Setting read access for everyone.
 
-        Configuring DNS at fakedns.
+        Configuring DNS at fakedns with username dnsu*** and password dnsp*******.
 
-        Uploading:
+        Uploading #{path.resolve(__dirname, 'data')}:
         [1/2] file.txt
         [2/2] other.coffee
 
         Site now available on: http://mybucket.leanmachine.se.s3-website-eu-west-1.amazonaws.com
-        DNS configured to (eventually) make it available at: http://mybucket.leanmachine.se
+        DNS configured to also make it available at: http://mybucket.leanmachine.se
 
       """
       done()
