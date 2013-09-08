@@ -46,7 +46,5 @@ bucketful.deploy(_.extend({}, conf, {
   if (err) {
     console.log(err);
     process.exit(1);
-  } else {
-    console.log("over and out");
   }
 });
