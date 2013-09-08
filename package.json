@@ -26,11 +26,11 @@
     "nconf": "^0.6"
   },
   "devDependencies": {
-    "jscov": ">= 0.4.1 < 0.6",
-    "mocha": ">= 1.8.2 < 2",
-    "mocha-term-cov-reporter": ">= 0.1.0 < 0.2",
-    "should": ">= 1.2.2 < 2",
-    "coffee-script": ">= 1.6.2 < 2"
+    "jscov": "^0.5.7",
+    "mocha": "^1.12.1",
+    "mocha-term-cov-reporter": "^0.1.0",
+    "should": "^1.2.2",
+    "coffee-script": "^1.6.2"
   },
   "scripts": {
     "coverage": "jscov --expand src .cov && JSCOV=.cov mocha --compilers coffee:coffee-script --reporter mocha-term-cov-reporter --recursive spec",
