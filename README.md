@@ -254,7 +254,6 @@ If you want to extend bucketful or integrate in into another environment, you ca
 * Use colors in the text logging (to highlight the configed parts when printing)
 * The fact that "package.json" and "config.json" are used as file input should be configurable (with those two as defaults)
 * Echo which files was actually used as "index" and "error" (and implement the new error-scheme; 404 and websiteIndex)
-* Add a license file.
 * Implement a dns plugin for Amazon Route 53.
 * Implement optional CloudFront configuration.
 * Rename stuff:
