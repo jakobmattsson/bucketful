@@ -9,7 +9,7 @@ describe 'load-config', ->
 
   describe 'load', ->
 
-    it 'sets default values for all options', () ->
+    it 'sets default values for all options, without a userConfig', () ->
       setCNAME = ->
       thePlugin = {
         create: -> { setCNAME: setCNAME }
@@ -53,7 +53,7 @@ describe 'load-config', ->
 
 
 
-  it 'sets default values for all options', () ->
+  it 'sets default values for all options, including a userConfig', () ->
     setCNAME = ->
     thePlugin = {
       create: -> { setCNAME: setCNAME }
