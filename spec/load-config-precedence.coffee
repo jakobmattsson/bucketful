@@ -94,3 +94,17 @@ describe 'load-config', ->
         res.index.should.eql 'something.html'
         res.error.should.eql 'something.html'
         done()
+
+      it 'uses 404.html, if such a file exists in the source root', (done) ->
+        tmp.dir (err, tmpDir) ->
+          should.not.exist err
+          fs.writeFileSync(tmpDir + '/404.html', 'error')
+          load = config.createLoader({ })
+          res = load({
+            bucketful: {
+              source: tmpDir
+            }
+          })
+          res.index.should.eql 'index.html'
+          res.error.should.eql '404.html'
+          done()

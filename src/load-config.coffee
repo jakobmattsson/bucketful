@@ -1,4 +1,5 @@
 path = require 'path'
+fs = require 'fs'
 
 # Silly hack to make this project testable without caching gotchas
 loadnconf = ->
@@ -39,13 +40,16 @@ exports.createLoader = ({ loadPlugin, userConfigPath }) ->
         password: password
       }
 
+    resolvedSource = path.resolve(source) if source
+    has404 = fs.existsSync(path.resolve(resolvedSource, '404.html')) if resolvedSource
+
     {
       bucket: nconf.get('bucketful:bucket')
       key: nconf.get('bucketful:key')
       secret: nconf.get('bucketful:secret')
       region: nconf.get('bucketful:region')
       index: nconf.get('bucketful:index')
-      error: nconf.get('bucketful:error') || nconf.get('bucketful:index')
-      source: path.resolve(source) if source?
+      error: nconf.get('bucketful:error') || if has404 then '404.html' else nconf.get('bucketful:index')
+      source: resolvedSource
       dns: dnsObject
     }
