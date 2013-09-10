@@ -250,9 +250,9 @@ If you want to extend bucketful or integrate in into another environment, you ca
 
 * Handle the case when region is not set gracefully (in particular the verbose output) and make it conform to amazons description.
 * For all combinations of input paramteters, test undefined-cases (for example, missing a region when creating a bucket)
-* Implement the configs-parameter
 * Implement new scheme for setting error (404.html or same as index (but not hardcoded to index.html))
 * Add travis badge and npm badge and coveralls badge to readme
+* Files that doesn't exist but are passed into configs should maybe be taken care of in some way? or is it ok? write test!
 
 ### Maybe
 

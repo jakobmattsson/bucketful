@@ -1,13 +1,26 @@
 path = require 'path'
-nconf = require 'nconf'
+
+# Silly hack to make this project testable without caching gotchas
+loadnconf = ->
+  if process.env.NODE_ENV != 'production'
+    for key of require.cache
+      delete require.cache[key]
+  require 'nconf'
 
 exports.createLoader = ({ loadPlugin, userConfigPath }) ->
+
+  nconf = loadnconf()
+
   (options) ->
     nconf.overrides(options).argv()
-    nconf.file "config", "config.json"
-    nconf.file "package", "package.json"
+
+    configs = nconf.get('bucketful:configs')
+
+    (configs || '').split(';').filter((x) -> x).forEach (file, i) ->
+      nconf.file("file_#{i+1}", file)
+
     nconf.env('__')
-    nconf.file "user", userConfigPath
+    nconf.file("user", userConfigPath) if userConfigPath
     nconf.defaults
       bucketful:
         index: 'index.html'
