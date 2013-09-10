@@ -269,6 +269,7 @@ If you want to extend bucketful or integrate in into another environment, you ca
 ## Contributions
 
 Implementations of the above, or other neat things, are very welcome.
+
 Include tests unless there's a very good reason not to.
 
 
