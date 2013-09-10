@@ -246,14 +246,20 @@ If you want to extend bucketful or integrate in into another environment, you ca
 
 ## ToDo / Wishlist
 
-* Set a default value for region (so that the documentation above is actually right)
-* Work on 100% test coverage
+### Prio
+
+* Handle the case when region is not set gracefully (in particular the verbose output) and make it conform to amazons description.
+* For all combinations of input paramteters, test undefined-cases (for example, missing a region when creating a bucket)
+* Implement the configs-parameter
+* Always config bucket as website, not just when creating it (both read access and index/error)
+* Implement new scheme for setting error (404.html or same as index (but not hardcoded to index.html))
+
+### Maybe
+
 * Figure out a way to test (most of) the bin-file
-* For all combinations of input paramteters, test undefied-cases (for example, missing a region when creating a bucket)
+* Work on 100% test coverage
 * Log total progress of uploads with respect to filesize rather than number of started files (both would be best)
 * Use colors in the text logging (to highlight the configed parts when printing)
-* The fact that "package.json" and "config.json" are used as file input should be configurable (with those two as defaults)
-* Echo which files was actually used as "index" and "error" (and implement the new error-scheme; 404 and index)
 * Implement a dns plugin for Amazon Route 53.
 * Implement optional CloudFront configuration.
 
