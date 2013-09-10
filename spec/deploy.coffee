@@ -463,3 +463,60 @@ describe 'deploy', ->
     , (err) =>
       err.message.should.eql 'cannot list buckets'
       done()
+
+
+
+
+
+
+  it 'yields an error if no bucket is given', (done) ->
+    output = stringstream.createStream()
+    deploy
+      key: 'awskey'
+      secret: 'awssecret'
+      source: 'spec/data'
+      output: output
+      createAwsClient: @mockAws
+    , (err) =>
+      err.message.should.eql 'Must supply a bucket'
+      output.toString().should.eql ''
+      done()
+
+  it 'yields an error if no key is given', (done) ->
+    output = stringstream.createStream()
+    deploy
+      bucket: 'mybucket.leanmachine.se'
+      secret: 'awssecret'
+      source: 'spec/data'
+      output: output
+      createAwsClient: @mockAws
+    , (err) =>
+      err.message.should.eql 'Must supply an AWS key'
+      output.toString().should.eql ''
+      done()
+
+  it 'yields an error if no secret is given', (done) ->
+    output = stringstream.createStream()
+    deploy
+      bucket: 'mybucket.leanmachine.se'
+      key: 'awskey'
+      source: 'spec/data'
+      output: output
+      createAwsClient: @mockAws
+    , (err) =>
+      err.message.should.eql 'Must supply an AWS secret token'
+      output.toString().should.eql ''
+      done()
+
+  it 'yields an error if no source is given', (done) ->
+    output = stringstream.createStream()
+    deploy
+      bucket: 'mybucket.leanmachine.se'
+      key: 'awskey'
+      secret: 'awssecret'
+      output: output
+      createAwsClient: @mockAws
+    , (err) =>
+      err.message.should.eql 'Must supply a source directory'
+      output.toString().should.eql ''
+      done()

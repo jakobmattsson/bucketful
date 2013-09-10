@@ -34,6 +34,11 @@ module.exports = (options, callback = ->) ->
     source
   } = options
 
+  return callback(new Error("Must supply a bucket")) if !bucket?
+  return callback(new Error("Must supply an AWS key")) if !key?
+  return callback(new Error("Must supply an AWS secret token")) if !secret?
+  return callback(new Error("Must supply a source directory")) if !source?
+
   log = (args...) -> output.write(args.join(' ') + '\n') if output?
 
   source = path.resolve(source)
