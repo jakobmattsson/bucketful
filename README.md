@@ -12,7 +12,7 @@ This readme is under construction. Some of it is not true. It's a trap.
 
 ### Description
 
-Bucketful takes a local directory and copies all of it's contents to a given Amazon S3 bucket. If the bucket does not exist, it creates it. Then it configures the bucket to act as a website, i.e. it gives public read access to all of the files to everyone and it assigns a file (typically index.html) to act as starting point for the site and also sets a response for 404's. Optionally it also adds a CNAME to the DNS configuration of the domain, to make the site accessible at the expected url.
+Bucketful takes a local directory and copies all of its content to a given Amazon S3 bucket. If the bucket does not exist, Bucketful creates it. Then the bucket is configured to act as a website, i.e. all of the files get public read access for everyone and a file is assigned (typically index.html) to act as starting point for the site and a response is set for 404's. Optionally a CNAME is added to the DNS configuration of the domain, to make the site accessible at the expected url.
 
 There's no interactivity required; set the configuration once and you'll be able to deploy like there's no tomorrow.
 
@@ -40,16 +40,16 @@ You should also have created a folder with some files (html, js, css, images etc
 
 Simplest possible usage:
 
-`bucketful --targetDir path/to/my/website/folder --bucket something.something.dark.com --key ABCD --secret XYZW`
+`bucketful --targetDir my/path --bucket something.something.dark.com --key ABCD --secret XYZW`
 
-The `key` and the `secret` are the AWS *Access Key* and *Secret Token* respectively. The bucket name can be anything, but the whole idea is to access is as a website so it should probably be a domain you own.
+The `key` and the `secret` are the AWS *Access Key* and *Secret Token* respectively. The `bucket` name can be anything, but the whole idea is to access is as a website so it should probably be a domain you own.
 
 Instead of having to type the arguments all the bloody time, you can put them in your `package.json` file, under the key `bucketful`, like this:
 
 ``` js
   {
     "bucketful": {
-      "targetDir": "path/to/my/website/folder",
+      "targetDir": "my/path",
       "bucket": "something.something.dark.com",
       "key": "ABCD",
       "secret": "XYZW"
@@ -57,7 +57,7 @@ Instead of having to type the arguments all the bloody time, you can put them in
   }
 ```
 
-As long as you're running bucketful from the folder where `package.json` is you'll just have to run the following now:
+As long as you're running bucketful from the folder where `package.json` is you'll just have to run the following on your command line now:
 
 `bucketful`
 
@@ -67,7 +67,7 @@ If you want to, you can override the configuration found in the file by passing 
 
 `bucketful --bucket something.something.complete.com`
 
-This will use the same targetDir, key and secret as the before, but deploy to the bucket `something.something.complete.com`.
+This will use the same settings as the before, but deploy to `something.something.complete.com`.
 
 Since you probably commit your `package.json` but don't want to put secret tokens into committed files, there are a number of additional ways to supply options.
 
@@ -77,40 +77,40 @@ Since you probably commit your `package.json` but don't want to put secret token
 
 So bucketful options can be given as arguments to the executable or put into `package.json`. But you're looking for more. Well then!
 
-Bucketful accepts an option called *configs* that can be used to choose which file(s) to read configuration from. Simply give it as a command line argument:
+Bucketful accepts an option called `configs` that can be used to choose which file(s) to read configuration from. Simply give it as a command line argument:
 
 `bucketful --configs somewhere/else/another_file.json`
 
-Now the file *another_file.json* will be used instead of `package.json` to read the rest of the arguments.
+Now the file `another_file.json` will be used instead of `package.json` to read the rest of the arguments.
 
 You can even supply multiple files separated with semicolon if you want to:
 
 `bucketful --configs "package.json;somewhere/else/another_file.json"`
 
-Now why would you want to do that? Well, if you want to check your config into source control but exclude secrets, you kind of have to load from two sources. So in this case, the non-secret things could be in package.json and the secrets (which are not commited) could be in somewhere/else/another_file.json.
+Now why would you want to do that? Well, if you want to check your config into source control but exclude secrets, you kind of have to load from two sources. So in this case, the non-secret things could be in `package.json` and the secrets (which are not commited) could be in `somewhere/else/another_file.json`.
 
-The default value for configs is actually `package.json;config.json`, so the default is to use `config.json` as storage for your secrets.
+The default value for configs is actually `package.json;config.json`, so the convention is to use `config.json` as storage for your secrets.
 
-Yet another option is to use the file `~/.bucketful`. That one is always loaded, regardless of what you specify in the configs-parameter. That way you can extract common settings that are not specific for a particular project (like your company AWS stuff, possibly) once for all projects.
+Yet another option is to use the file `~/.bucketful` (also on the json format). That one is always loaded, regardless of what you specify in the configs-parameter. That way you can extract common settings that are not specific for a particular project (like your company AWS stuff, possibly) once for all projects.
 
 If files are not enough for you, you can also use environment variables, like this:
 
 `bucketful__key=ABCD bucketful__secret==XYZW bucketful`
 
-That will read package.json, config.json and ~/.bucketful just as usual, but also the key and secret as expected. That is particularly useful in CI-envorinments and the like.
+That will read `package.json`, `config.json` and `~/.bucketful` just as usual, but also the key and secret as expected. That is particularly useful in CI-environments and the like.
 
 
 
 ### Resolution order
 
-If an option is given in two or more of these ways, then the more "local" one will take precedance. The exact order, from strongest to weakest, is what follows:
+If an option is given in two or more of these ways, then the more "local" one will take precedence. The exact order, from strongest to weakest, is what follows:
 
 * Command line arguments
 * Files read from --configs, from first to last
 * Environment variables
 * ~/.bucketful
 
-Note that all arguments can be given in all of these ways. Except `configs`. That would be weird. it can only be supplied via the command line.
+Note that all arguments can be given in all of these ways. Except `configs`. That would be weird. It can only be supplied via the command line.
 
 Out of uniformity, the command line arguments can be given on the format `bucketful:option` as well, as to express the same namespacing as the files and environment variables enforce. So this is perfectly valid:
 
@@ -124,7 +124,7 @@ Out of uniformity, the command line arguments can be given on the format `bucket
 
 Usage: `bucketful --region eu-west-1`
 
-Creates the bucket in the given region. If the bucket already exists when bucketful is run, then this option is ignored. It will NOT change the region of an existing bucket.
+Creates the bucket in the given AWS region. If the bucket already exists when bucketful is run, then this option is ignored. It will NOT change the region of an existing bucket.
 
 The valid region names, as well as what happens if no region is given, can be found in [Amazon's own documentation](http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region).
 
@@ -134,7 +134,7 @@ Usage: `bucketful --websiteIndex start.html --websiteError wtf.html`
 
 The `websiteIndex` configures the bucket to use the given file as the response when a request is issued to the root path of the domain. The default value for this parameter is `index.html`.
 
-The `websiteError` configures the bucket to use the given file as the response when a request is issued for a file that doesn't exist. Or in other words, this file will be served as the 404 response. The default value for this parameter is 404.html, if such a file exists in the deployed folder. If no such file exists, it will use the same file as `websiteIndex`, which is reasonable for single page apps.
+The `websiteError` configures the bucket to use the given file as the response when a request is issued for a file that doesn't exist. Or in other words, this file will be served as the 404 response. The default value for this parameter is `404.html`, if such a file exists in the deployed folder. If no such file exists, it will use the same file as `websiteIndex`, which is reasonable for single page apps.
 
 The configuration given with these two arguments will always be executed, regardless of whether the bucket already existed or not.
 
@@ -163,12 +163,10 @@ Bucketful can be required like all other npm modules. It exposes two functions; 
 
 ``` js
   var bucketful = require('bucketful');
-
   var loaded = bucketful.load();
-
   bucketful.deploy({}, function(err) {
     
-  })
+  });
 ```
 
 ### bucketful.deploy
@@ -181,7 +179,7 @@ The `deploy` function does pretty much the same thing as the command line versio
     key: 'ABCD',
     secret: 'XYZW',
     bucket: 'something.something.dark.com',
-    targetDir: 'path/to/my/deploy/dir'
+    targetDir: 'my/path'
   }, function(err) {
     // This will be invoked when the deploy is finished.
     // If successful, err will be falsy.
@@ -189,16 +187,16 @@ The `deploy` function does pretty much the same thing as the command line versio
   });
 ```
 
-In addition to all the arguments accepted by the command line version, the `bucketful.deploy` function also accepts an argument called `output`. If given a stream, for example process.stdout, it will print verbose progress information (the same at the command line client prints) to that stream. If the `output` argument is not set, the function will run in silence.
+In addition to all the arguments accepted by the command line version, the `bucketful.deploy` function also accepts an argument called `output`. If given a stream, for example `process.stdout`, it will print verbose progress information (the same at the command line client prints) to that stream. If the `output` argument is not set, the function will run in silence.
 
 ``` js
   var bucketful = require('bucketful');
   bucketful.deploy({
-    output: process.stdout, // add some logging!
+    output: process.stdout, // logging is on!
     key: 'ABCD',
     secret: 'XYZW',
     bucket: 'something.something.dark.com',
-    targetDir: 'path/to/my/deploy/dir'
+    targetDir: 'my/path'
   }, function(err) {
     // ...
   });
@@ -210,18 +208,16 @@ The `load` function reads all arguments from all sources decribed above and reso
 
 ``` js
   var bucketful = require('bucketful');
-
   var conf = bucketful.load();
-  console.log(conf) // { key: 'ABCD', secret: 'XYZW', bucket: 'something.something.dark.com', targetDir: 'path/to/my/folder' }
+  console.log(conf); // { key: 'ABCD', secret: 'XYZW', bucket: 'something.something.dark.com', targetDir: 'my/path' }
 ```
 
 Ìt also accepts and object with overrides for the arguments. This can be though of as the strongest of all resolutons mechanisms:
 
 ``` js
   var bucketful = require('bucketful');
-
   var conf = bucketful.load({ bucket: 'something.something.complete.com' });
-  console.log(conf) // { key: 'ABCD', secret: 'XYZW', bucket: 'something.something.complete.com', targetDir: 'path/to/my/folder' }
+  console.log(conf); // { key: 'ABCD', secret: 'XYZW', bucket: 'something.something.complete.com', targetDir: 'my/path' }
 ```
 
 
@@ -241,7 +237,6 @@ So, essentially what the command line interface does is the following:
       console.log(err);
       process.exit(1);
     }
-    process.exit(0);
   });
 ```
 
@@ -260,6 +255,8 @@ If you want to extend bucketful or integrate in into another environment, you ca
 * The fact that "package.json" and "config.json" are used as file input should be configurable (with those two as defaults)
 * Echo which files was actually used as "index" and "error" (and implement the new error-scheme; 404 and websiteIndex)
 * Add a license file.
+* Implement a dns plugin for Amazon Route 53.
+* Implement optional CloudFront configuration.
 * Rename stuff:
   * Rename "dnsProvider" to "dns".
   * Rename "targetDir" to "source".
@@ -271,7 +268,8 @@ If you want to extend bucketful or integrate in into another environment, you ca
 
 ## Contributions
 
-Implementations of the above, or other neat things, are very welcome. Include tests unless there's a very good reason not to.
+Implementations of the above, or other neat things, are very welcome.
+Include tests unless there's a very good reason not to.
 
 
 
