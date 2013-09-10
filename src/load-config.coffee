@@ -24,7 +24,6 @@ exports.createLoader = ({ loadPlugin, userConfigPath }) ->
     nconf.defaults
       bucketful:
         index: 'index.html'
-        error: 'index.html'
 
     dns = nconf.get('bucketful:dns')
     source = nconf.get('bucketful:source')
@@ -46,7 +45,7 @@ exports.createLoader = ({ loadPlugin, userConfigPath }) ->
       secret: nconf.get('bucketful:secret')
       region: nconf.get('bucketful:region')
       index: nconf.get('bucketful:index')
-      error: nconf.get('bucketful:error')
+      error: nconf.get('bucketful:error') || nconf.get('bucketful:index')
       source: path.resolve(source) if source?
       dns: dnsObject
     }

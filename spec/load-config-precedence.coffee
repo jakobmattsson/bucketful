@@ -82,3 +82,15 @@ describe 'load-config', ->
         res.index.should.eql 'index.html'
         res.error.should.eql 'index.html'
         done()
+
+      it 'uses the same file as index if such a file is given', (done) ->
+        load = config.createLoader({ })
+        res = load({
+          bucketful: {
+            source: 'spec/data'
+            index: 'something.html'
+          }
+        })
+        res.index.should.eql 'something.html'
+        res.error.should.eql 'something.html'
+        done()
