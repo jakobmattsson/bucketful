@@ -251,7 +251,6 @@ If you want to extend bucketful or integrate in into another environment, you ca
 * Handle the case when region is not set gracefully (in particular the verbose output) and make it conform to amazons description.
 * For all combinations of input paramteters, test undefined-cases (for example, missing a region when creating a bucket)
 * Implement the configs-parameter
-* Always config bucket as website, not just when creating it (both read access and index/error)
 * Implement new scheme for setting error (404.html or same as index (but not hardcoded to index.html))
 
 ### Maybe

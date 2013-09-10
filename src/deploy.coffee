@@ -55,12 +55,12 @@ module.exports = (options, callback = ->) ->
 
       aws.createBucket(bucket).then ->
         log "Bucket created."
-        log "Setting website config using #{index} as index and #{error} as error."
-        aws.bucketToWebsite({ name: bucket, index: index, error: error })
-      .then ->
-        log "Setting read access for everyone."
-        aws.giveEveryoneReadAccess(bucket)
-
+  .then ->
+    log "Setting website config using #{index} as index and #{error} as error."
+    aws.bucketToWebsite({ name: bucket, index: index, error: error })
+  .then ->
+    log "Setting read access for everyone."
+    aws.giveEveryoneReadAccess(bucket)
   .then ->
     if dns?
       

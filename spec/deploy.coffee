@@ -253,6 +253,34 @@ describe 'deploy', ->
       method: 'listBuckets'
       args: [{}]
     ,
+      method: 'putBucketWebsite'
+      args: [
+        Bucket: 'mybucket.leanmachine.se'
+        WebsiteConfiguration:
+          IndexDocument:
+            Suffix: 'index.html'
+          ErrorDocument:
+            Key : 'error.html'
+      ]
+    ,
+      method: 'getBucketAcl'
+      args: [
+        Bucket: 'mybucket.leanmachine.se'
+      ]
+    ,
+      method: 'putBucketAcl'
+      args: [
+        Bucket: 'mybucket.leanmachine.se'
+        AccessControlPolicy:
+          Owner: {}
+          Grants: [
+            Permission: 'READ'
+            Grantee:
+              URI: 'http://acs.amazonaws.com/groups/global/AllUsers'
+              Type: 'Group'
+          ]
+      ]
+    ,
       method: 'putObject'
       args: [
         ACL: 'public-read'
@@ -319,6 +347,8 @@ describe 'deploy', ->
 
         Accessing aws account using key awsk** and secret awss*****.
         Bucket mybucket.leanmachine.se found in the region eu-west-1.
+        Setting website config using index.html as index and error.html as error.
+        Setting read access for everyone.
 
         Uploading #{path.resolve(__dirname, 'data')}:
         [1/2] file.txt
