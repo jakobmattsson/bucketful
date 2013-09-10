@@ -51,52 +51,50 @@ describe 'load-config', ->
 
 
 
-
-
-  it 'sets default values for all options, including a userConfig', () ->
-    setCNAME = ->
-    thePlugin = {
-      create: -> { setCNAME: setCNAME }
-      namespace: 'someplugin'
-    }
-    load = config.createLoader({
-      loadPlugin: (plugin) -> thePlugin
-      userConfigPath: path.resolve(__dirname, 'config/bucketful-userConfig.json')
-    })
-
-    userConfig = {
-      bucketful: {
-        dns: "myProvider"
-        region: "eu-west-1"
-      }
-      someplugin: {
-        username: 'daName'
-      }
-    }
-
-    defaults = [
-      ['bucket', 'bucket', undefined]
-      ['source', 'source', undefined]
-      ['key', 'key', undefined]
-      ['secret', 'secret', undefined]
-      ['region', 'region', undefined]
-      ['index', 'index', 'index.html']
-      ['error', 'error', 'index.html']
-    ]
-
-    outExpect = _.object defaults.map ([outname, key, defaultValue]) ->
-      [outname, process.env['bucketful__' + key] || userConfig.bucketful[key] || defaultValue]
-
-    # dns is different
-    dns = process.env['bucketful__dns'] || userConfig.bucketful.dns
-    if dns
-      outExpect.dns = {
-        username: process.env['someplugin__username'] || userConfig.someplugin?.username
-        password: process.env['someplugin__password'] || userConfig.someplugin?.password
-        setCNAME: thePlugin.create().setCNAME
+    it 'sets default values for all options, including a userConfig', () ->
+      setCNAME = ->
+      thePlugin = {
+        create: -> { setCNAME: setCNAME }
         namespace: 'someplugin'
       }
-    else
-      outExpect.dns = undefined
+      load = config.createLoader({
+        loadPlugin: (plugin) -> thePlugin
+        userConfigPath: path.resolve(__dirname, 'config/bucketful-userConfig.json')
+      })
 
-    load({}).should.eql(outExpect)
+      userConfig = {
+        bucketful: {
+          dns: "myProvider"
+          region: "eu-west-1"
+        }
+        someplugin: {
+          username: 'daName'
+        }
+      }
+
+      defaults = [
+        ['bucket', 'bucket', undefined]
+        ['source', 'source', undefined]
+        ['key', 'key', undefined]
+        ['secret', 'secret', undefined]
+        ['region', 'region', undefined]
+        ['index', 'index', 'index.html']
+        ['error', 'error', 'index.html']
+      ]
+
+      outExpect = _.object defaults.map ([outname, key, defaultValue]) ->
+        [outname, process.env['bucketful__' + key] || userConfig.bucketful[key] || defaultValue]
+
+      # dns is different
+      dns = process.env['bucketful__dns'] || userConfig.bucketful.dns
+      if dns
+        outExpect.dns = {
+          username: process.env['someplugin__username'] || userConfig.someplugin?.username
+          password: process.env['someplugin__password'] || userConfig.someplugin?.password
+          setCNAME: thePlugin.create().setCNAME
+          namespace: 'someplugin'
+        }
+      else
+        outExpect.dns = undefined
+
+      load({}).should.eql(outExpect)
