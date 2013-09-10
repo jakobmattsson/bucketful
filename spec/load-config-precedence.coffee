@@ -67,3 +67,18 @@ describe 'load-config', ->
         res.key.should.eql 'key!'
         res.secret.should.eql 'secret!'
         done()
+
+
+
+    describe 'when given no error-argument', ->
+
+      it 'uses index.html if there is no 404.html in the source and no index is given', (done) ->
+        load = config.createLoader({ })
+        res = load({
+          bucketful: {
+            source: 'spec/data'
+          }
+        })
+        res.index.should.eql 'index.html'
+        res.error.should.eql 'index.html'
+        done()
