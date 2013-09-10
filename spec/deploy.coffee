@@ -140,14 +140,14 @@ describe 'deploy', ->
     ]
 
     deploy
-      s3bucket: 'mybucket.leanmachine.se'
-      aws_key: 'awskey'
-      aws_secret: 'awssecret'
+      bucket: 'mybucket.leanmachine.se'
+      key: 'awskey'
+      secret: 'awssecret'
       region: 'eu-west-1'
-      siteIndex: 'index.html'
-      siteError: 'error.html'
-      targetDir: 'spec/data'
-      dnsProvider: @mockDns
+      index: 'index.html'
+      error: 'error.html'
+      source: 'spec/data'
+      dns: @mockDns
       createAwsClient: @mockAws
     , (err) =>
       should.not.exist err
@@ -224,13 +224,13 @@ describe 'deploy', ->
     ]
 
     deploy
-      s3bucket: 'mybucket.leanmachine.se'
-      aws_key: 'awskey'
-      aws_secret: 'awssecret'
+      bucket: 'mybucket.leanmachine.se'
+      key: 'awskey'
+      secret: 'awssecret'
       region: 'eu-west-1'
-      siteIndex: 'index.html'
-      siteError: 'error.html'
-      targetDir: 'spec/data'
+      index: 'index.html'
+      error: 'error.html'
+      source: 'spec/data'
       createAwsClient: @mockAws
     , (err) =>
       should.not.exist err
@@ -277,13 +277,13 @@ describe 'deploy', ->
         callback(null, { Buckets: [{ Name: 'mybucket.leanmachine.se' }] })
 
     deploy
-      s3bucket: 'mybucket.leanmachine.se'
-      aws_key: 'awskey'
-      aws_secret: 'awssecret'
+      bucket: 'mybucket.leanmachine.se'
+      key: 'awskey'
+      secret: 'awssecret'
       region: 'eu-west-1'
-      siteIndex: 'index.html'
-      siteError: 'error.html'
-      targetDir: 'spec/data'
+      index: 'index.html'
+      error: 'error.html'
+      source: 'spec/data'
       createAwsClient: @mockAws
     , (err) =>
       should.not.exist err
@@ -303,13 +303,13 @@ describe 'deploy', ->
         callback(null, { Buckets: [{ Name: 'mybucket.leanmachine.se' }] })
 
     deploy
-      s3bucket: 'mybucket.leanmachine.se'
-      aws_key: 'awskey'
-      aws_secret: 'awssecret'
+      bucket: 'mybucket.leanmachine.se'
+      key: 'awskey'
+      secret: 'awssecret'
       region: 'eu-west-1'
-      siteIndex: 'index.html'
-      siteError: 'error.html'
-      targetDir: 'spec/data'
+      index: 'index.html'
+      error: 'error.html'
+      source: 'spec/data'
       output: output
       createAwsClient: @mockAws
     , (err) =>
@@ -339,13 +339,13 @@ describe 'deploy', ->
     output = stringstream.createStream()
 
     deploy
-      s3bucket: 'mybucket.leanmachine.se'
-      aws_key: 'awskey'
-      aws_secret: 'awssecret'
+      bucket: 'mybucket.leanmachine.se'
+      key: 'awskey'
+      secret: 'awssecret'
       region: 'eu-west-1'
-      siteIndex: 'index.html'
-      siteError: 'error.html'
-      targetDir: 'spec/data'
+      index: 'index.html'
+      error: 'error.html'
+      source: 'spec/data'
       output: output
       createAwsClient: @mockAws
     , (err) =>
@@ -379,16 +379,16 @@ describe 'deploy', ->
     output = stringstream.createStream()
 
     deploy
-      s3bucket: 'mybucket.leanmachine.se'
-      aws_key: 'awskey'
-      aws_secret: 'awssecret'
+      bucket: 'mybucket.leanmachine.se'
+      key: 'awskey'
+      secret: 'awssecret'
       region: 'eu-west-1'
-      siteIndex: 'index.html'
-      siteError: 'error.html'
-      targetDir: 'spec/data'
+      index: 'index.html'
+      error: 'error.html'
+      source: 'spec/data'
       output: output
       createAwsClient: @mockAws
-      dnsProvider: @mockDns
+      dns: @mockDns
     , (err) =>
       should.not.exist err
       output.toString().should.eql """
@@ -422,13 +422,13 @@ describe 'deploy', ->
     @listBuckets = (opts, callback) -> callback(new Error("cannot list buckets"))
 
     deploy
-      s3bucket: 'mybucket.leanmachine.se'
-      aws_key: 'awskey'
-      aws_secret: 'awssecret'
+      bucket: 'mybucket.leanmachine.se'
+      key: 'awskey'
+      secret: 'awssecret'
       region: 'eu-west-1'
-      siteIndex: 'index.html'
-      siteError: 'error.html'
-      targetDir: 'spec/data'
+      index: 'index.html'
+      error: 'error.html'
+      source: 'spec/data'
       createAwsClient: @mockAws
     , (err) =>
       err.message.should.eql 'cannot list buckets'

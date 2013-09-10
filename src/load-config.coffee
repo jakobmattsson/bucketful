@@ -10,14 +10,14 @@ exports.createLoader = ({ loadPlugin, userConfigPath }) ->
     nconf.file "user", userConfigPath
     nconf.defaults
       bucketful:
-        websiteIndex: 'index.html'
-        websiteError: 'index.html'
+        index: 'index.html'
+        error: 'index.html'
 
-    dnsProvider = nconf.get('bucketful:dnsProvider')
-    targetDir = nconf.get('bucketful:targetDir')
+    dns = nconf.get('bucketful:dns')
+    source = nconf.get('bucketful:source')
 
-    if dnsProvider
-      dnsReq = loadPlugin(dnsProvider)
+    if dns
+      dnsReq = loadPlugin(dns)
       username = nconf.get("#{dnsReq.namespace}:username")
       password = nconf.get("#{dnsReq.namespace}:password")
       dnsObject = {
@@ -28,12 +28,12 @@ exports.createLoader = ({ loadPlugin, userConfigPath }) ->
       }
 
     {
-      s3bucket: nconf.get('bucketful:bucket')
-      aws_key: nconf.get('bucketful:key')
-      aws_secret: nconf.get('bucketful:secret')
+      bucket: nconf.get('bucketful:bucket')
+      key: nconf.get('bucketful:key')
+      secret: nconf.get('bucketful:secret')
       region: nconf.get('bucketful:region')
-      siteIndex: nconf.get('bucketful:websiteIndex')
-      siteError: nconf.get('bucketful:websiteError')
-      targetDir: path.resolve(targetDir) if targetDir?
-      dnsProvider: dnsObject
+      index: nconf.get('bucketful:index')
+      error: nconf.get('bucketful:error')
+      source: path.resolve(source) if source?
+      dns: dnsObject
     }

@@ -40,7 +40,7 @@ You should also have created a folder with some files (html, js, css, images etc
 
 Simplest possible usage:
 
-`bucketful --targetDir my/path --bucket something.something.dark.com --key ABCD --secret XYZW`
+`bucketful --source my/path --bucket something.something.dark.com --key ABCD --secret XYZW`
 
 The `key` and the `secret` are the AWS *Access Key* and *Secret Token* respectively. The `bucket` name can be anything, but the whole idea is to access is as a website so it should probably be a domain you own.
 
@@ -49,7 +49,7 @@ Instead of having to type the arguments all the bloody time, you can put them in
 ``` js
   {
     "bucketful": {
-      "targetDir": "my/path",
+      "source": "my/path",
       "bucket": "something.something.dark.com",
       "key": "ABCD",
       "secret": "XYZW"
@@ -128,19 +128,19 @@ Creates the bucket in the given AWS region. If the bucket already exists when bu
 
 The valid region names, as well as what happens if no region is given, can be found in [Amazon's own documentation](http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region).
 
-#### websiteIndex & websiteError
+#### index & error
 
-Usage: `bucketful --websiteIndex start.html --websiteError wtf.html`
+Usage: `bucketful --index start.html --error wtf.html`
 
-The `websiteIndex` configures the bucket to use the given file as the response when a request is issued to the root path of the domain. The default value for this parameter is `index.html`.
+The `index` configures the bucket to use the given file as the response when a request is issued to the root path of the domain. The default value for this parameter is `index.html`.
 
-The `websiteError` configures the bucket to use the given file as the response when a request is issued for a file that doesn't exist. Or in other words, this file will be served as the 404 response. The default value for this parameter is `404.html`, if such a file exists in the deployed folder. If no such file exists, it will use the same file as `websiteIndex`, which is reasonable for single page apps.
+The `error` configures the bucket to use the given file as the response when a request is issued for a file that doesn't exist. Or in other words, this file will be served as the 404 response. The default value for this parameter is `404.html`, if such a file exists in the deployed folder. If no such file exists, it will use the same file as `index`, which is reasonable for single page apps.
 
 The configuration given with these two arguments will always be executed, regardless of whether the bucket already existed or not.
 
-#### dnsProvider
+#### dns
 
-Usage: `bucketful --dnsProvider bucketful-loopia`
+Usage: `bucketful --dns bucketful-loopia`
 
 The value of this argument should be the name of a bucketful plugin package. The plugin will then be used to update a DNS configation to make the site available at the domain given as bucket name.
 
@@ -179,7 +179,7 @@ The `deploy` function does pretty much the same thing as the command line versio
     key: 'ABCD',
     secret: 'XYZW',
     bucket: 'something.something.dark.com',
-    targetDir: 'my/path'
+    source: 'my/path'
   }, function(err) {
     // This will be invoked when the deploy is finished.
     // If successful, err will be falsy.
@@ -196,7 +196,7 @@ In addition to all the arguments accepted by the command line version, the `buck
     key: 'ABCD',
     secret: 'XYZW',
     bucket: 'something.something.dark.com',
-    targetDir: 'my/path'
+    source: 'my/path'
   }, function(err) {
     // ...
   });
@@ -209,7 +209,7 @@ The `load` function reads all arguments from all sources decribed above and reso
 ``` js
   var bucketful = require('bucketful');
   var conf = bucketful.load();
-  console.log(conf); // { key: 'ABCD', secret: 'XYZW', bucket: 'something.something.dark.com', targetDir: 'my/path' }
+  console.log(conf); // { key: 'ABCD', secret: 'XYZW', bucket: 'something.something.dark.com', source: 'my/path' }
 ```
 
 Ìt also accepts and object with overrides for the arguments. This can be though of as the strongest of all resolutons mechanisms:
@@ -217,7 +217,7 @@ The `load` function reads all arguments from all sources decribed above and reso
 ``` js
   var bucketful = require('bucketful');
   var conf = bucketful.load({ bucket: 'something.something.complete.com' });
-  console.log(conf); // { key: 'ABCD', secret: 'XYZW', bucket: 'something.something.complete.com', targetDir: 'my/path' }
+  console.log(conf); // { key: 'ABCD', secret: 'XYZW', bucket: 'something.something.complete.com', source: 'my/path' }
 ```
 
 
@@ -253,15 +253,9 @@ If you want to extend bucketful or integrate in into another environment, you ca
 * Log total progress of uploads with respect to filesize rather than number of started files (both would be best)
 * Use colors in the text logging (to highlight the configed parts when printing)
 * The fact that "package.json" and "config.json" are used as file input should be configurable (with those two as defaults)
-* Echo which files was actually used as "index" and "error" (and implement the new error-scheme; 404 and websiteIndex)
+* Echo which files was actually used as "index" and "error" (and implement the new error-scheme; 404 and index)
 * Implement a dns plugin for Amazon Route 53.
 * Implement optional CloudFront configuration.
-* Rename stuff:
-  * Rename "dnsProvider" to "dns".
-  * Rename "targetDir" to "source".
-  * Rename "websiteIndex" to "index"
-  * Rename "websiteError" to "error"
-  * After doing all the renaming, make sure the CLI and bucketful.deploy have the same argument names
 
 
 

@@ -24,54 +24,51 @@ module.exports = (options, callback = ->) ->
   {
     output
     createAwsClient
-    dnsProvider
-    s3bucket
-    aws_key
-    aws_secret
+    dns
+    bucket
+    key
+    secret
     region
-    siteIndex
-    siteError
-    targetDir
+    index
+    error
+    source
   } = options
 
   log = (args...) -> output.write(args.join(' ') + '\n') if output?
 
-  targetDir = path.resolve(targetDir)
+  source = path.resolve(source)
 
   powerfsIsFile = Q.nbind(powerfs.isFile, powerfs)
 
-  aws = awsClient(createAwsClient({ region, key: aws_key, secret: aws_secret }))
-
-  maskedKey = maskString(aws_key)
-  maskedSecret = maskString(aws_secret)
+  aws = awsClient(createAwsClient({ region, key: key, secret: secret }))
 
   log ""
-  log "Accessing aws account using key #{maskedKey} and secret #{maskedSecret}."
+  log "Accessing aws account using key #{maskString(key)} and secret #{maskString(secret)}."
 
   aws.getBucketNames().then (buckets) ->
 
-    if _(buckets).contains(s3bucket)
-      log "Bucket #{s3bucket} found in the region #{region}."
+    if _(buckets).contains(bucket)
+      log "Bucket #{bucket} found in the region #{region}."
     else
-      log "Bucket #{s3bucket } not found in the given account."
+      log "Bucket #{bucket} not found in the given account."
       log "Attempting to create it in the region #{region}."
 
-      aws.createBucket(s3bucket).then ->
+      aws.createBucket(bucket).then ->
         log "Bucket created."
-        log "Setting website config using #{siteIndex} as index and #{siteError} as error."
-        aws.bucketToWebsite({ name: s3bucket, index: siteIndex, error: siteError })
+        log "Setting website config using #{index} as index and #{error} as error."
+        aws.bucketToWebsite({ name: bucket, index: index, error: error })
       .then ->
         log "Setting read access for everyone."
-        aws.giveEveryoneReadAccess(s3bucket)
+        aws.giveEveryoneReadAccess(bucket)
 
   .then ->
-    if dnsProvider?
+    if dns?
       
-      if dnsProvider.username? && dnsProvider.password?
+      if dns.username? && dns.password?
         log()
-        log "Configuring DNS at #{dnsProvider.namespace} with username #{maskString(dnsProvider.username)} and password #{maskString(dnsProvider.password)}."
-        cname = "#{s3bucket}.s3-website-#{region}.amazonaws.com"
-        Q.nfcall(dnsProvider.setCNAME, s3bucket, cname)
+        log "Configuring DNS at #{dns.namespace} with username #{maskString(dns.username)} and password #{maskString(dns.password)}."
+        cname = "#{bucket}.s3-website-#{region}.amazonaws.com"
+        Q.nfcall(dns.setCNAME, bucket, cname)
       else
         log()
         log "WARNING: Provided domain registrar, but not username/password"
@@ -79,9 +76,9 @@ module.exports = (options, callback = ->) ->
   .then ->
 
     log()
-    log "Uploading #{targetDir}:"
+    log "Uploading #{source}:"
 
-    wrench.readdirSyncRecursive(targetDir).map (x) -> { fullpath: path.join(targetDir, x), name: x }
+    wrench.readdirSyncRecursive(source).map (x) -> { fullpath: path.join(source, x), name: x }
 
   .then (files) ->
     qfilter files, (file) -> powerfsIsFile(file.fullpath)
@@ -94,7 +91,7 @@ module.exports = (options, callback = ->) ->
       aws.putFile({
         filename: file.fullpath
         target: file.name
-        bucket: s3bucket
+        bucket: bucket
       }).then ->
         counter++
         padding = _.times(10, -> " ").join('')
@@ -103,9 +100,9 @@ module.exports = (options, callback = ->) ->
 
   .then ->
     log ""
-    log "Site now available on: http://#{s3bucket}.s3-website-#{region}.amazonaws.com"
-    if dnsProvider?.username? && dnsProvider?.password?
-      log "DNS configured to also make it available at: http://#{s3bucket}"
+    log "Site now available on: http://#{bucket}.s3-website-#{region}.amazonaws.com"
+    if dns?.username? && dns?.password?
+      log "DNS configured to also make it available at: http://#{bucket}"
     else
       log "No DNS configured."
 

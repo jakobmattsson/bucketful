@@ -23,29 +23,29 @@ describe 'load-config', ->
       userConfig = { bucketful: {} }
 
       defaults = [
-        ['s3bucket', 'bucket', undefined]
-        ['targetDir', 'targetDir', undefined]
-        ['aws_key', 'key', undefined]
-        ['aws_secret', 'secret', undefined]
+        ['bucket', 'bucket', undefined]
+        ['source', 'source', undefined]
+        ['key', 'key', undefined]
+        ['secret', 'secret', undefined]
         ['region', 'region', undefined]
-        ['siteIndex', 'websiteIndex', 'index.html']
-        ['siteError', 'websiteError', 'index.html']
+        ['index', 'index', 'index.html']
+        ['error', 'error', 'index.html']
       ]
 
       outExpect = _.object defaults.map ([outname, key, defaultValue]) ->
         [outname, process.env['bucketful__' + key] || userConfig.bucketful[key] || defaultValue]
 
-      # dnsProvider is different
-      dnsProvider = process.env['bucketful__dnsProvider'] || userConfig.bucketful.dnsProvider
-      if dnsProvider
-        outExpect.dnsProvider = {
+      # dns is different
+      dns = process.env['bucketful__dns'] || userConfig.bucketful.dns
+      if dns
+        outExpect.dns = {
           username: process.env['whateverPlug__username'] || userConfig.whateverPlug?.username
           password: process.env['whateverPlug__username'] || userConfig.whateverPlug?.username
           setCNAME: thePlugin.create().setCNAME
           namespace: 'whateverPlug'
         }
       else
-        outExpect.dnsProvider = undefined
+        outExpect.dns = undefined
 
       load({}).should.eql(outExpect)
 
@@ -66,7 +66,7 @@ describe 'load-config', ->
 
     userConfig = {
       bucketful: {
-        dnsProvider: "myProvider"
+        dns: "myProvider"
         region: "eu-west-1"
       }
       someplugin: {
@@ -75,28 +75,28 @@ describe 'load-config', ->
     }
 
     defaults = [
-      ['s3bucket', 'bucket', undefined]
-      ['targetDir', 'targetDir', undefined]
-      ['aws_key', 'key', undefined]
-      ['aws_secret', 'secret', undefined]
+      ['bucket', 'bucket', undefined]
+      ['source', 'source', undefined]
+      ['key', 'key', undefined]
+      ['secret', 'secret', undefined]
       ['region', 'region', undefined]
-      ['siteIndex', 'websiteIndex', 'index.html']
-      ['siteError', 'websiteError', 'index.html']
+      ['index', 'index', 'index.html']
+      ['error', 'error', 'index.html']
     ]
 
     outExpect = _.object defaults.map ([outname, key, defaultValue]) ->
       [outname, process.env['bucketful__' + key] || userConfig.bucketful[key] || defaultValue]
 
-    # dnsProvider is different
-    dnsProvider = process.env['bucketful__dnsProvider'] || userConfig.bucketful.dnsProvider
-    if dnsProvider
-      outExpect.dnsProvider = {
+    # dns is different
+    dns = process.env['bucketful__dns'] || userConfig.bucketful.dns
+    if dns
+      outExpect.dns = {
         username: process.env['someplugin__username'] || userConfig.someplugin?.username
         password: process.env['someplugin__password'] || userConfig.someplugin?.password
         setCNAME: thePlugin.create().setCNAME
         namespace: 'someplugin'
       }
     else
-      outExpect.dnsProvider = undefined
+      outExpect.dns = undefined
 
     load({}).should.eql(outExpect)
