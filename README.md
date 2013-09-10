@@ -252,6 +252,7 @@ If you want to extend bucketful or integrate in into another environment, you ca
 * For all combinations of input paramteters, test undefined-cases (for example, missing a region when creating a bucket)
 * Implement the configs-parameter
 * Implement new scheme for setting error (404.html or same as index (but not hardcoded to index.html))
+* Add travis badge and npm badge and coveralls badge to readme
 
 ### Maybe
 
@@ -261,6 +262,10 @@ If you want to extend bucketful or integrate in into another environment, you ca
 * Use colors in the text logging (to highlight the configed parts when printing)
 * Implement a dns plugin for Amazon Route 53.
 * Implement optional CloudFront configuration.
+* GZip-support.
+* Possibility to set caching headers.
+* Option for setting max number of concurrent S3-uploads.
+* Grunt plugin.
 
 
 
