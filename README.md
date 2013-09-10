@@ -248,13 +248,15 @@ If you want to extend bucketful or integrate in into another environment, you ca
 
 ### Prio
 
-* Handle the case when region is not set gracefully (in particular the verbose output) and make it conform to amazons description.
-* For all combinations of input paramteters, test undefined-cases (for example, missing a region when creating a bucket)
-* Add travis badge and npm badge and coveralls badge to readme
+* Test what happens when "region" is undefined and make it conform to amazons description.
+* Test what happens when "index" is undefined (will not happen in binary, but programatically it can happen)
+* Test what happens when "error" is undefined (will not happen in binary, but programatically it can happen)
+* Handle the case when region is set to some invalid value (should probably just yeild an error)
 * Files that doesn't exist but are passed into configs should maybe be taken care of in some way? or is it ok? write test!
 
 ### Maybe
 
+* Add travis badge and npm badge and coveralls badge to readme
 * Figure out a way to test (most of) the bin-file
 * Work on 100% test coverage
 * Log total progress of uploads with respect to filesize rather than number of started files (both would be best)
