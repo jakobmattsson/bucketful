@@ -549,3 +549,27 @@ describe 'deploy', ->
 
       '''
       done()
+
+
+
+
+  it 'defaults region to us-east-1 if no region is given', (done) ->
+    output = stringstream.createStream()
+    @expects = [
+      method: 'createAws'
+      args: [
+        region: 'us-east-1'
+        key: 'awskey'
+        secret: 'awssecret'
+      ]
+    ]
+    deploy
+      bucket: 'mybucket.leanmachine.se'
+      key: 'awskey'
+      secret: 'awssecret'
+      source: @uploadDir
+      output: output
+      createAwsClient: @mockAws
+    , (err) =>
+      output.toString().should.include 'Attempting to create it in the region us-east-1.'
+      done()
