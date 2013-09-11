@@ -126,7 +126,20 @@ Usage: `bucketful --region eu-west-1`
 
 Creates the bucket in the given AWS region. If the bucket already exists when bucketful is run, then this option is ignored. It will NOT change the region of an existing bucket.
 
-The valid region names, as well as what happens if no region is given, can be found in [Amazon's own documentation](http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region).
+At the time of writing, Amazon accepts the follow region values:
+
+* us-east-1 (US Standard; Northern Virginia and Pacific Northwest)
+* us-west-1 (US West; Oregon)
+* us-west-2 (US West; Northern California)
+* eu-west-1 (EU; Ireland)
+* ap-southeast-1 (Asia Pacific; Singapore)
+* ap-southeast-2 (Asia Pacific; Sydney)
+* ap-northeast-1 (Asia Pacific; Tokyo)
+* sa-east-1 (South America; Sao Paulo)
+
+If no option is given, us-east-1 will be used.
+
+Amazons own list of valid region names can be found in [Amazon's own documentation](http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region).
 
 #### index & error
 

@@ -25,6 +25,7 @@ exports.createLoader = ({ loadPlugin, userConfigPath }) ->
     nconf.defaults
       bucketful:
         index: 'index.html'
+        region: 'us-east-1'
 
     dns = nconf.get('bucketful:dns')
     source = nconf.get('bucketful:source')
