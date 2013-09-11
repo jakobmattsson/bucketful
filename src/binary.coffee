@@ -1,24 +1,10 @@
-fs = require 'fs'
-path = require 'path'
 optimist = require 'optimist'
-_ = require 'underscore'
-bucketful = require './bucketful'
-options = require './options'
 packageData = require '../package.json'
-
-options.forEach ({ name, desc, defaultValue }) ->
-  optimist.describe(name, desc)
-
-optimist
-  .usage(packageData.description)
-  .describe("version", "Print the current version number")
-  .describe("help", "Show this help message")
-  .alias("version", "v")
-  .alias("help", "h")
-  .argv
+bucketful = require './bucketful'
+help = require './help'
 
 if optimist.argv.help
-  console.log(optimist.help())
+  console.log(help.getHelpText())
 else if optimist.argv.version
   console.log(packageData.version)
 else
@@ -27,7 +13,8 @@ else
     console.log(arguments)
 
   conf = bucketful.load()
-  bucketful.deploy _.extend({}, conf, { output: process.stdout }), (err) ->
+  conf.output = process.stdout
+  bucketful.deploy conf, (err) ->
     console.log()
     if err
       console.log(err)
