@@ -1,6 +1,6 @@
 optimist = require 'optimist'
 options = require './options'
-packageData = require '../package.json'
+packageData = require '../../package.json'
 
 exports.getHelpText = ->
 

@@ -1,2 +1,2 @@
 #!/usr/bin/env node
-require('../lib/binary');
+require('../lib/interface/binary');

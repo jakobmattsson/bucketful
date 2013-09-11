@@ -1,7 +1,7 @@
 {
   "name": "bucketful",
   "description": "Deploys websites to Amazon S3",
-  "main": "./lib/bucketful.js",
+  "main": "./lib/interface/api.js",
   "bin": {
     "bucketful": "./bin/bucketful"
   },

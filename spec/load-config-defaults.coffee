@@ -3,7 +3,7 @@ path = require 'path'
 should = require 'should'
 jscov = require 'jscov'
 _ = require 'underscore'
-config = require jscov.cover('..', 'src', 'load-config')
+config = require jscov.cover('..', 'src', 'implementation/load-config')
 
 describe 'load-config', ->
 

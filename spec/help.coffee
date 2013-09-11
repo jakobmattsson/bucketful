@@ -1,6 +1,6 @@
 should = require 'should'
 jscov = require 'jscov'
-help = require jscov.cover('..', 'src', 'help')
+help = require jscov.cover('..', 'src', 'implementation/help')
 
 describe 'help', ->
 

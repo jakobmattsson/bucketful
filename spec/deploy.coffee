@@ -3,7 +3,7 @@ fs = require 'fs'
 _ = require 'underscore'
 should = require 'should'
 jscov = require 'jscov'
-deploy = require jscov.cover('..', 'src', 'deploy')
+deploy = require jscov.cover('..', 'src', 'implementation/deploy')
 stringstream = require './util/stringstream'
 
 describe 'deploy', ->

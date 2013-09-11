@@ -5,7 +5,7 @@ should = require 'should'
 tmp = require 'tmp'
 jscov = require 'jscov'
 _ = require 'underscore'
-config = require jscov.cover('..', 'src', 'load-config')
+config = require jscov.cover('..', 'src', 'implementation/load-config')
 
 propagate = (onErr, onSucc) -> (err, rest...) -> if err? then onErr(err) else onSucc(rest...)
 

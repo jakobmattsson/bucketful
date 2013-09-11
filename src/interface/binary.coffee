@@ -1,7 +1,7 @@
 optimist = require 'optimist'
-packageData = require '../package.json'
-bucketful = require './bucketful'
-help = require './help'
+packageData = require '../../package.json'
+bucketful = require './api'
+help = require '../implementation/help'
 
 if optimist.argv.help
   console.log(help.getHelpText())
