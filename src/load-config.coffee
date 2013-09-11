@@ -15,7 +15,7 @@ exports.createLoader = ({ loadPlugin, userConfigPath }) ->
   (options) ->
     nconf.overrides(options).argv()
 
-    configs = nconf.get('bucketful:configs')
+    configs = nconf.get('bucketful:configs') || 'package.json;config.json'
 
     (configs || '').split(';').filter((x) -> x).forEach (file, i) ->
       nconf.file("file_#{i+1}", file)
