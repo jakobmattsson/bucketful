@@ -1,5 +1,8 @@
 path = require 'path'
 fs = require 'fs'
+_ = require 'underscore'
+optimist = require 'optimist'
+
 
 # Silly hack to make this project testable without caching gotchas
 loadnconf = ->
@@ -8,12 +11,27 @@ loadnconf = ->
       delete require.cache[key]
   require 'nconf'
 
+
 exports.createLoader = ({ loadPlugin, userConfigPath }) ->
 
   nconf = loadnconf()
 
   (options) ->
-    nconf.overrides(options).argv()
+
+    argnames = [
+      'source'
+      'bucket'
+      'key'
+      'secret'
+      'region'
+      'index'
+      'error'
+      'dns'
+      'configs'
+    ]
+    shortNames = _.pick(optimist.argv, argnames)
+
+    nconf.overrides({ bucketful: _.extend({}, options || {}, shortNames) }).argv()
 
     configs = nconf.get('bucketful:configs') || 'package.json;config.json'
 

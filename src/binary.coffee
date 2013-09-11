@@ -9,17 +9,15 @@ args = [
   { name: 'bucket',  desc: "S3 bucket used as target for the upload" }
   { name: 'key',     desc: "AWS access key" }
   { name: 'secret',  desc: "AWS access secret" }
-  { name: 'region',  desc: "AWS region to create the bucket in", defaultValue: 'us-east-1' }
-  { name: 'index',   desc: "File to use as index page", defaultValue: 'index.html' }
+  { name: 'region',  desc: "AWS region to create the bucket in (defaults to 'us-east-1')" }
+  { name: 'index',   desc: "File to use as index page (defaults to 'index.html')" }
   { name: 'error',   desc: "File to use as error page" }
-  { name: 'dns',     desc: "The name of a bucketful plugin for setting up a CNAME for your domain" }
-  { name: 'configs', desc: "The files from which to read configs", defaultValue: 'package.json;config.json' }
+  { name: 'dns',     desc: "The name of a bucketful plugin for configuring a CNAME" }
+  { name: 'configs', desc: "Configuration files (defaults to 'package.json;config.json')" }
 ]
 
 args.forEach ({ name, desc, defaultValue }) ->
-  optimist.describe('bucketful:' + name, desc)
-  optimist.alias('bucketful:' + name, name)
-  optimist.default('bucketful:' + name, defaultValue)
+  optimist.describe(name, desc)
 
 optimist
   .usage("Deploys websites to Amazon S3")

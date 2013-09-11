@@ -29,7 +29,7 @@ describe 'load-config', ->
         }
 
         fs.writeFile tmpFile, JSON.stringify(fileConf), ->
-          res = load({ bucketful: bucket: 'function.bucket' })
+          res = load({ bucket: 'function.bucket' })
           res.bucket.should.eql 'function.bucket'
           res.key.should.eql 'file.key'
           done()
@@ -59,9 +59,7 @@ describe 'load-config', ->
       , (err, temps) ->
         should.not.exist err
         res = load({
-          bucketful: {
-            configs: temps.join(';')
-          }
+          configs: temps.join(';')
         })
         res.bucket.should.eql 'file1'
         res.key.should.eql 'key!'
@@ -75,9 +73,7 @@ describe 'load-config', ->
       it 'uses index.html if there is no 404.html in the source and no index is given', (done) ->
         load = config.createLoader({ })
         res = load({
-          bucketful: {
-            source: 'spec/data'
-          }
+          source: 'spec/data'
         })
         res.index.should.eql 'index.html'
         res.error.should.eql 'index.html'
@@ -86,10 +82,8 @@ describe 'load-config', ->
       it 'uses the same file as index if such a file is given', (done) ->
         load = config.createLoader({ })
         res = load({
-          bucketful: {
-            source: 'spec/data'
-            index: 'something.html'
-          }
+          source: 'spec/data'
+          index: 'something.html'
         })
         res.index.should.eql 'something.html'
         res.error.should.eql 'something.html'
@@ -101,9 +95,7 @@ describe 'load-config', ->
           fs.writeFileSync(tmpDir + '/404.html', 'error')
           load = config.createLoader({ })
           res = load({
-            bucketful: {
-              source: tmpDir
-            }
+            source: tmpDir
           })
           res.index.should.eql 'index.html'
           res.error.should.eql '404.html'
