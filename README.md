@@ -271,7 +271,6 @@ If you want to extend bucketful or integrate in into another environment, you ca
 ### Maybe
 
 * Add travis badge and npm badge and coveralls badge to readme
-* Figure out a way to test (most of) the bin-file
 * Work on 100% test coverage
 * Log total progress of uploads with respect to filesize rather than number of started files (both would be best)
 * Use colors in the text logging (to highlight the configed parts when printing)
