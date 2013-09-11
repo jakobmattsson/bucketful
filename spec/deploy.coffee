@@ -5,13 +5,14 @@ should = require 'should'
 jscov = require 'jscov'
 deploy = require jscov.cover('..', 'src', 'implementation/deploy')
 stringstream = require './util/stringstream'
+tmp = require 'tmp'
 
 describe 'deploy', ->
 
   override = (original, cb) ->
     (args...) -> cb.apply(this, [original].concat(args))
 
-  beforeEach ->
+  beforeEach (done) ->
 
     popOne = (method, argumentsObject) =>
       syncMethods = ['createAws']
@@ -67,7 +68,11 @@ describe 'deploy', ->
         callback()
     }
 
-
+    tmp.dir (err, tmpDir) =>
+      @uploadDir = tmpDir
+      fs.writeFileSync(tmpDir + '/file.txt', 'hello')
+      fs.writeFileSync(tmpDir + '/other.coffee', 'f = (args...) ->\n  args.slice(1)\n')
+      done()
 
 
 
@@ -126,7 +131,7 @@ describe 'deploy', ->
         Bucket: 'mybucket.leanmachine.se'
         ContentType: 'text/plain'
         Key: 'file.txt'
-        Body: fs.readFileSync('./spec/data/file.txt')
+        Body: fs.readFileSync(path.resolve(@uploadDir, 'file.txt'))
       ]
     ,
       method: 'putObject'
@@ -135,7 +140,7 @@ describe 'deploy', ->
         Bucket: 'mybucket.leanmachine.se'
         ContentType: 'application/octet-stream'
         Key: 'other.coffee'
-        Body: fs.readFileSync('./spec/data/other.coffee')
+        Body: fs.readFileSync(path.resolve(@uploadDir, 'other.coffee'))
       ]
     ]
 
@@ -146,7 +151,7 @@ describe 'deploy', ->
       region: 'eu-west-1'
       index: 'index.html'
       error: 'error.html'
-      source: 'spec/data'
+      source: @uploadDir
       dns: @mockDns
       createAwsClient: @mockAws
     , (err) =>
@@ -210,7 +215,7 @@ describe 'deploy', ->
         Bucket: 'mybucket.leanmachine.se'
         ContentType: 'text/plain'
         Key: 'file.txt'
-        Body: fs.readFileSync('./spec/data/file.txt')
+        Body: fs.readFileSync(path.resolve(@uploadDir, 'file.txt'))
       ]
     ,
       method: 'putObject'
@@ -219,7 +224,7 @@ describe 'deploy', ->
         Bucket: 'mybucket.leanmachine.se'
         ContentType: 'application/octet-stream'
         Key: 'other.coffee'
-        Body: fs.readFileSync('./spec/data/other.coffee')
+        Body: fs.readFileSync(path.resolve(@uploadDir, 'other.coffee'))
       ]
     ]
 
@@ -230,7 +235,7 @@ describe 'deploy', ->
       region: 'eu-west-1'
       index: 'index.html'
       error: 'error.html'
-      source: 'spec/data'
+      source: @uploadDir
       createAwsClient: @mockAws
     , (err) =>
       should.not.exist err
@@ -287,7 +292,7 @@ describe 'deploy', ->
         Bucket: 'mybucket.leanmachine.se'
         ContentType: 'text/plain'
         Key: 'file.txt'
-        Body: fs.readFileSync('./spec/data/file.txt')
+        Body: fs.readFileSync(path.resolve(@uploadDir, 'file.txt'))
       ]
     ,
       method: 'putObject'
@@ -296,7 +301,7 @@ describe 'deploy', ->
         Bucket: 'mybucket.leanmachine.se'
         ContentType: 'application/octet-stream'
         Key: 'other.coffee'
-        Body: fs.readFileSync('./spec/data/other.coffee')
+        Body: fs.readFileSync(path.resolve(@uploadDir, 'other.coffee'))
       ]
     ]
 
@@ -311,7 +316,7 @@ describe 'deploy', ->
       region: 'eu-west-1'
       index: 'index.html'
       error: 'error.html'
-      source: 'spec/data'
+      source: @uploadDir
       createAwsClient: @mockAws
     , (err) =>
       should.not.exist err
@@ -337,7 +342,7 @@ describe 'deploy', ->
       region: 'eu-west-1'
       index: 'index.html'
       error: 'error.html'
-      source: 'spec/data'
+      source: @uploadDir
       output: output
       createAwsClient: @mockAws
     , (err) =>
@@ -350,7 +355,7 @@ describe 'deploy', ->
         Setting website config using index.html as index and error.html as error.
         Setting read access for everyone.
 
-        Uploading #{path.resolve(__dirname, 'data')}:
+        Uploading #{@uploadDir}:
         [1/2] file.txt
         [2/2] other.coffee
 
@@ -375,7 +380,7 @@ describe 'deploy', ->
       region: 'eu-west-1'
       index: 'index.html'
       error: 'error.html'
-      source: 'spec/data'
+      source: @uploadDir
       output: output
       createAwsClient: @mockAws
     , (err) =>
@@ -390,7 +395,7 @@ describe 'deploy', ->
         Setting website config using index.html as index and error.html as error.
         Setting read access for everyone.
 
-        Uploading #{path.resolve(__dirname, 'data')}:
+        Uploading #{@uploadDir}:
         [1/2] file.txt
         [2/2] other.coffee
 
@@ -415,7 +420,7 @@ describe 'deploy', ->
       region: 'eu-west-1'
       index: 'index.html'
       error: 'error.html'
-      source: 'spec/data'
+      source: @uploadDir
       output: output
       createAwsClient: @mockAws
       dns: @mockDns
@@ -433,7 +438,7 @@ describe 'deploy', ->
 
         Configuring DNS at fakedns with username dnsu*** and password dnsp*******.
 
-        Uploading #{path.resolve(__dirname, 'data')}:
+        Uploading #{@uploadDir}:
         [1/2] file.txt
         [2/2] other.coffee
 
@@ -458,7 +463,7 @@ describe 'deploy', ->
       region: 'eu-west-1'
       index: 'index.html'
       error: 'error.html'
-      source: 'spec/data'
+      source: @uploadDir
       createAwsClient: @mockAws
     , (err) =>
       err.message.should.eql 'cannot list buckets'
@@ -474,7 +479,7 @@ describe 'deploy', ->
     deploy
       key: 'awskey'
       secret: 'awssecret'
-      source: 'spec/data'
+      source: @uploadDir
       output: output
       createAwsClient: @mockAws
     , (err) =>
@@ -487,7 +492,7 @@ describe 'deploy', ->
     deploy
       bucket: 'mybucket.leanmachine.se'
       secret: 'awssecret'
-      source: 'spec/data'
+      source: @uploadDir
       output: output
       createAwsClient: @mockAws
     , (err) =>
@@ -500,7 +505,7 @@ describe 'deploy', ->
     deploy
       bucket: 'mybucket.leanmachine.se'
       key: 'awskey'
-      source: 'spec/data'
+      source: @uploadDir
       output: output
       createAwsClient: @mockAws
     , (err) =>
@@ -531,7 +536,7 @@ describe 'deploy', ->
     deploy
       key: 'awskey'
       secret: 'awssecret'
-      source: 'spec/data'
+      source: @uploadDir
       bucket: 'somebucket'
       region: 'invalidregion'
       output: output
