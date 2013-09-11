@@ -9,10 +9,10 @@ args = [
   { name: 'bucket',  desc: "S3 bucket used as target for the upload" }
   { name: 'key',     desc: "AWS access key" }
   { name: 'secret',  desc: "AWS access secret" }
-  { name: 'region',  desc: "Files/folders to include in the upload", defaultValue: 'us-east-1' }
-  { name: 'index',   desc: "File to use as index for the site", defaultValue: 'index.html' }
-  { name: 'error',   desc: "File to use for error on the site" }
-  { name: 'dns',     desc: "The name of a bucketful plugin for setting up a cname for your domain" }
+  { name: 'region',  desc: "AWS region to create the bucket in", defaultValue: 'us-east-1' }
+  { name: 'index',   desc: "File to use as index page", defaultValue: 'index.html' }
+  { name: 'error',   desc: "File to use as error page" }
+  { name: 'dns',     desc: "The name of a bucketful plugin for setting up a CNAME for your domain" }
   { name: 'configs', desc: "The files from which to read configs", defaultValue: 'package.json;config.json' }
 ]
 
