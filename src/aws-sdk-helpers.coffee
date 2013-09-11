@@ -49,5 +49,5 @@ exports.bucketToWebsite = (s3client, {index, error, name}, callback) ->
       IndexDocument:
         Suffix: index
       ErrorDocument:
-        Key : error
+        Key: error
   , callback
