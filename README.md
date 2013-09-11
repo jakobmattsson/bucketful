@@ -42,7 +42,7 @@ Simplest possible usage:
 
 `bucketful --source my/path --bucket something.something.dark.com --key ABCD --secret XYZW`
 
-The `key` and the `secret` are the AWS *Access Key* and *Secret Token* respectively. The `bucket` name can be anything, but the whole idea is to access is as a website so it should probably be a domain you own.
+The `key` and the `secret` are the AWS *Access Key* and *Secret Token* respectively. The `bucket` name can be anything, but the whole idea is to access it as a website so it should probably be a domain you own.
 
 Instead of having to type the arguments all the bloody time, you can put them in your `package.json` file, under the key `bucketful`, like this:
 
