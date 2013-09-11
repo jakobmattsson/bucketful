@@ -1,6 +1,7 @@
 path = require 'path'
 fs = require 'fs'
 _ = require 'underscore'
+optionsCfg = require './options'
 optimist = require 'optimist'
 
 
@@ -18,17 +19,7 @@ exports.createLoader = ({ loadPlugin, userConfigPath }) ->
 
   (options) ->
 
-    argnames = [
-      'source'
-      'bucket'
-      'key'
-      'secret'
-      'region'
-      'index'
-      'error'
-      'dns'
-      'configs'
-    ]
+    argnames = _.pluck(optionsCfg, 'name')
     shortNames = _.pick(optimist.argv, argnames)
 
     nconf.overrides({ bucketful: _.extend({}, options || {}, shortNames) }).argv()
