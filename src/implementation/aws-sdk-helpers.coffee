@@ -39,10 +39,6 @@ exports.giveEveryoneReadAccess = (s3client, name, callback) ->
     , callback
 
 exports.bucketToWebsite = (s3client, {index, error, name}, callback) ->
-
-  index ?= 'index.html'
-  error ?= index
-
   s3client.putBucketWebsite
     Bucket: name
     WebsiteConfiguration:
