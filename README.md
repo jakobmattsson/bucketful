@@ -264,6 +264,8 @@ If you want to extend bucketful or integrate in into another environment, you ca
 * Test what happens when "index" is undefined (will not happen in binary, but programatically it can happen)
 * Test what happens when "error" is undefined (will not happen in binary, but programatically it can happen)
 * Files that doesn't exist but are passed into configs should maybe be taken care of in some way? or is it ok? write test!
+* If the bucket is created in one region, but then bucketful is executed with an another region argument, what should happen? warning? error? print the right thing!
+* Remove redundant default value specification. (should not be up to the binary)
 
 ### Maybe
 
