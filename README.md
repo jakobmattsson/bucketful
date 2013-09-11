@@ -261,10 +261,8 @@ If you want to extend bucketful or integrate in into another environment, you ca
 
 ### Prio
 
-* Test what happens when "region" is undefined and make it conform to amazons description.
 * Test what happens when "index" is undefined (will not happen in binary, but programatically it can happen)
 * Test what happens when "error" is undefined (will not happen in binary, but programatically it can happen)
-* Handle the case when region is set to some invalid value (should probably just yeild an error)
 * Files that doesn't exist but are passed into configs should maybe be taken care of in some way? or is it ok? write test!
 
 ### Maybe

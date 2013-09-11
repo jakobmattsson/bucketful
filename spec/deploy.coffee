@@ -520,3 +520,27 @@ describe 'deploy', ->
       err.message.should.eql 'Must supply a source directory'
       output.toString().should.eql ''
       done()
+
+
+
+  it 'yields an error if the region is invalid', (done) ->
+
+    @listBuckets = (opts, callback) -> callback(new Error("failed"))
+    output = stringstream.createStream()
+
+    deploy
+      key: 'awskey'
+      secret: 'awssecret'
+      source: 'spec/data'
+      bucket: 'somebucket'
+      region: 'invalidregion'
+      output: output
+      createAwsClient: @mockAws
+    , (err) =>
+      err.message.should.eql 'failed'
+      output.toString().should.eql '''
+
+      Accessing aws account using key awsk** and secret awss*****.
+
+      '''
+      done()
