@@ -280,7 +280,7 @@ Include tests unless there's a very good reason not to.
 
 ## Author
 
-[@jakobmattsson](https://twitter.com/jakobmattsson)
+Jakob Mattsson, [@jakobmattsson](https://twitter.com/jakobmattsson)
 
 
 
