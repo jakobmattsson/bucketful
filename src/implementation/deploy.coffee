@@ -35,6 +35,7 @@ module.exports = (options, callback = ->) ->
   } = options
 
   region ?= 'us-east-1'
+  index ?= 'index.html'
 
   return callback(new Error("Must supply a bucket")) if !bucket?
   return callback(new Error("Must supply an AWS key")) if !key?

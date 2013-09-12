@@ -574,3 +574,25 @@ describe 'deploy', ->
       throw err if err?
       output.toString().should.include 'Attempting to create it in the region us-east-1.'
       done()
+
+
+
+  it 'defaults index to index.html if undefined', (done) ->
+    output = stringstream.createStream()
+
+    @putBucketWebsite = override @putBucketWebsite, (base, opts, callback) =>
+      suffix = opts?.WebsiteConfiguration?.IndexDocument?.Suffix || ''
+      suffix.should.eql 'index.html'
+      base(opts, callback)
+
+    deploy
+      bucket: 'mybucket.leanmachine.se'
+      key: 'awskey'
+      secret: 'awssecret'
+      source: @uploadDir
+      output: output
+      createAwsClient: @mockAws
+    , (err) =>
+      throw err if err?
+      done()
+
