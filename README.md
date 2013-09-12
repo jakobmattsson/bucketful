@@ -4,12 +4,6 @@ Deploys static websites to Amazon S3.
 
 
 
-### Disclaimer
-
-This readme is under construction. Some of it is not true. It's a trap.
-
-
-
 ### Description
 
 Bucketful takes a local directory and copies all of its content to a given Amazon S3 bucket. If the bucket does not exist, Bucketful creates it. Then the bucket is configured to act as a website, i.e. all of the files get public read access for everyone and a file is assigned (typically index.html) to act as starting point for the site and a response is set for 404's. Optionally a CNAME is added to the DNS configuration of the domain, to make the site accessible at the expected url.
