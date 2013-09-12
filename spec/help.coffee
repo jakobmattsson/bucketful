@@ -34,7 +34,10 @@ describe 'help', ->
     it 'prints the current version when given the string "version"', (done) ->
       stream = createStream()
       help.binaryMeta('version', stream, ->)
-      stream.toString().should.eql '0.14.1\n'
+      version = require('../package.json').version
+      dots = Array::filter.call(version, (x) -> x == '.')
+      dots.should.have.length 2
+      stream.toString().should.eql(version + '\n')
       done()
 
 
