@@ -80,21 +80,20 @@ module.exports = ({
       if dns.username? && dns.password?
         log()
         log "Configuring DNS at #{dns.namespace} with username #{maskString(dns.username)} and password #{maskString(dns.password)}."
-        cname = "#{bucket}.s3-website-#{region}.amazonaws.com"
-        Q.nfcall(dns.setCNAME, bucket, cname)
+        Q.nfcall(dns.setCNAME, bucket, "#{bucket}.s3-website-#{region}.amazonaws.com")
       else
         log()
         log "WARNING: Provided domain registrar, but not username/password."
 
   .then ->
-    log()
-    log "Uploading #{source}:"
     wrench.readdirSyncRecursive(source).map (x) -> { fullpath: path.join(source, x), name: x }
 
   .then (files) ->
     qfilter files, (file) -> powerfsIsFile(file.fullpath)
 
   .then (files) ->
+    log()
+    log "Uploading #{source}:"
     counter = 0
 
     Q.all files.map (file, i) ->
