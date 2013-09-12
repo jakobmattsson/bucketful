@@ -7,3 +7,7 @@ exports.createStream = ->
   output.on 'data', (buffer) -> written += buffer.toString()
   output.toString = -> written
   output
+
+
+exports.override = (original, cb) ->
+  (args...) -> cb.apply(this, [original].concat(args))
