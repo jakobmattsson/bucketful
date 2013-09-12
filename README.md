@@ -255,11 +255,11 @@ If you want to extend bucketful or integrate in into another environment, you ca
 ### Prio
 
 * If the bucket is created in one region, but then bucketful is executed with an another region argument, what should happen? warning? error? print the right thing!
+* Is a new "Grant" added every time "giveEveryoneReadAccess" runs now? Check it out and if so, stop it.
 
 ### Maybe
 
 * Add travis badge and npm badge and coveralls badge to readme
-* Work on 100% test coverage
 * Log total progress of uploads with respect to filesize rather than number of started files (both would be best)
 * Use colors in the text logging (to highlight the configed parts when printing)
 * Implement a dns plugin for Amazon Route 53.
@@ -268,6 +268,7 @@ If you want to extend bucketful or integrate in into another environment, you ca
 * Possibility to set caching headers.
 * Option for setting max number of concurrent S3-uploads.
 * Grunt plugin.
+* Implement a CDN-provider other than amazon as backend.
 
 
 
