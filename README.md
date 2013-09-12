@@ -126,7 +126,7 @@ Usage: `bucketful --region eu-west-1`
 
 Creates the bucket in the given AWS region. If the bucket already exists when bucketful is run, then this option is ignored. It will NOT change the region of an existing bucket.
 
-At the time of writing, Amazon accepts the follow region values:
+At the time of writing, Amazon accepts the following region values:
 
 * us-east-1 (US Standard; Northern Virginia and Pacific Northwest)
 * us-west-1 (US West; Oregon)
@@ -139,7 +139,7 @@ At the time of writing, Amazon accepts the follow region values:
 
 If no option is given, us-east-1 will be used.
 
-Amazons own list of valid region names can be found in [Amazon's own documentation](http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region).
+Amazons up-to-date list of valid region names can be found in [Amazon's own documentation](http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region).
 
 #### index & error
 
@@ -178,7 +178,7 @@ Bucketful can be required like all other npm modules. It exposes two functions; 
   var bucketful = require('bucketful');
   var loaded = bucketful.load();
   bucketful.deploy({}, function(err) {
-    
+    // ...
   });
 ```
 
@@ -225,7 +225,7 @@ The `load` function reads all arguments from all sources decribed above and reso
   console.log(conf); // { key: 'ABCD', secret: 'XYZW', bucket: 'something.something.dark.com', source: 'my/path' }
 ```
 
-Ìt also accepts and object with overrides for the arguments. This can be though of as the strongest of all resolutons mechanisms:
+It also accepts an object with overrides for the arguments. This can be thought of as the strongest of all resolutons mechanisms:
 
 ``` js
   var bucketful = require('bucketful');
@@ -245,9 +245,8 @@ So, essentially what the command line interface does is the following:
   var conf = bucketful.load();
   conf.output = process.stdout;
 
-  bucketful.deploy(conf), function(err) {
+  bucketful.deploy(conf, function(err) {
     if (err) {
-      console.log(err);
       process.exit(1);
     }
   });
