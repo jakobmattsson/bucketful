@@ -596,3 +596,60 @@ describe 'deploy', ->
       throw err if err?
       done()
 
+
+
+  it 'defaults error to 404.html, if the file exists in the source directory', (done) ->
+    @putBucketWebsite = override @putBucketWebsite, (base, opts, callback) =>
+      suffix = opts?.WebsiteConfiguration?.ErrorDocument?.Key || ''
+      suffix.should.eql '404.html'
+      base(opts, callback)
+
+    tmp.dir (err, tmpdir) =>
+      throw err if err?
+      fs.writeFileSync(path.resolve(tmpdir, '404.html'), 'bla')
+      deploy
+        bucket: 'mybucket.leanmachine.se'
+        key: 'awskey'
+        secret: 'awssecret'
+        source: tmpdir
+        createAwsClient: @mockAws
+      , (err) =>
+        throw err if err?
+        done()
+
+
+
+  it 'defaults error to the same value as index, if no 404.html file exists in the source', (done) ->
+    @putBucketWebsite = override @putBucketWebsite, (base, opts, callback) =>
+      suffix = opts?.WebsiteConfiguration?.ErrorDocument?.Key || ''
+      suffix.should.eql 'foobar.html'
+      base(opts, callback)
+
+    deploy
+      bucket: 'mybucket.leanmachine.se'
+      key: 'awskey'
+      index: 'foobar.html'
+      secret: 'awssecret'
+      source: @uploadDir
+      createAwsClient: @mockAws
+    , (err) =>
+      throw err if err?
+      done()
+
+
+
+  it 'defaults error to the same value as index, if no 404.html file exists in the source, when index is also undefined', (done) ->
+    @putBucketWebsite = override @putBucketWebsite, (base, opts, callback) =>
+      suffix = opts?.WebsiteConfiguration?.ErrorDocument?.Key || ''
+      suffix.should.eql 'index.html'
+      base(opts, callback)
+
+    deploy
+      bucket: 'mybucket.leanmachine.se'
+      key: 'awskey'
+      secret: 'awssecret'
+      source: @uploadDir
+      createAwsClient: @mockAws
+    , (err) =>
+      throw err if err?
+      done()

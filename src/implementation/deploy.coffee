@@ -34,8 +34,6 @@ module.exports = (options, callback = ->) ->
     source
   } = options
 
-  region ?= 'us-east-1'
-  index ?= 'index.html'
 
   return callback(new Error("Must supply a bucket")) if !bucket?
   return callback(new Error("Must supply an AWS key")) if !key?
@@ -45,15 +43,26 @@ module.exports = (options, callback = ->) ->
   log = (args...) -> output.write(args.join(' ') + '\n') if output?
 
   source = path.resolve(source)
+  region ?= 'us-east-1'
+  index ?= 'index.html'
 
   powerfsIsFile = Q.nbind(powerfs.isFile, powerfs)
+  powerfsFileExits = Q.nbind(((p, callback) -> powerfs.fileExists(p, (r) -> callback(null, r))), powerfs)
 
   aws = awsClient(createAwsClient({ region, key: key, secret: secret }))
 
   log ""
   log "Accessing aws account using key #{maskString(key)} and secret #{maskString(secret)}."
 
-  aws.getBucketNames().then (buckets) ->
+  powerfsFileExits(path.resolve(source, '404.html')).then (has404) ->
+    return if error
+    if has404
+      error = '404.html'
+    else
+      error = index
+  .then ->
+    aws.getBucketNames()
+  .then (buckets) ->
 
     if _(buckets).contains(bucket)
       log "Bucket #{bucket} found in the region #{region}."
