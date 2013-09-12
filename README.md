@@ -261,7 +261,6 @@ If you want to extend bucketful or integrate in into another environment, you ca
 
 ### Prio
 
-* Files that doesn't exist but are passed into configs should maybe be taken care of in some way? or is it ok? write test!
 * If the bucket is created in one region, but then bucketful is executed with an another region argument, what should happen? warning? error? print the right thing!
 
 ### Maybe

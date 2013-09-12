@@ -8,9 +8,8 @@ if optimist.argv.help
 else if optimist.argv.version
   console.log(packageData.version)
 else
-  process.on 'uncaughtException', ->
-    console.log('uncaught exception')
-    console.log(arguments)
+  process.on 'uncaughtException', (err) ->
+    console.log('Uncaught exception!', err?.message || err)
 
   conf = bucketful.load()
   conf.output = process.stdout
