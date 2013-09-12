@@ -69,6 +69,7 @@ describe 'deploy', ->
     }
 
     tmp.dir (err, tmpDir) =>
+      throw err if err?
       @uploadDir = tmpDir
       fs.writeFileSync(tmpDir + '/file.txt', 'hello')
       fs.writeFileSync(tmpDir + '/other.coffee', 'f = (args...) ->\n  args.slice(1)\n')
@@ -155,7 +156,7 @@ describe 'deploy', ->
       dns: @mockDns
       createAwsClient: @mockAws
     , (err) =>
-      should.not.exist err
+      throw err if err?
       @expects.should.have.length 0
       done()
 
@@ -238,7 +239,7 @@ describe 'deploy', ->
       source: @uploadDir
       createAwsClient: @mockAws
     , (err) =>
-      should.not.exist err
+      throw err if err?
       @expects.should.have.length 0
       done()
 
@@ -319,7 +320,7 @@ describe 'deploy', ->
       source: @uploadDir
       createAwsClient: @mockAws
     , (err) =>
-      should.not.exist err
+      throw err if err?
       @expects.should.have.length 0
       done()
 
@@ -346,7 +347,7 @@ describe 'deploy', ->
       output: output
       createAwsClient: @mockAws
     , (err) =>
-      should.not.exist err
+      throw err if err?
       output.toString().should.eql """
 
 
@@ -384,7 +385,7 @@ describe 'deploy', ->
       output: output
       createAwsClient: @mockAws
     , (err) =>
-      should.not.exist err
+      throw err if err?
       output.toString().should.eql """
 
 
@@ -425,7 +426,7 @@ describe 'deploy', ->
       createAwsClient: @mockAws
       dns: @mockDns
     , (err) =>
-      should.not.exist err
+      throw err if err?
       output.toString().should.eql """
 
 
@@ -552,7 +553,6 @@ describe 'deploy', ->
 
 
 
-
   it 'defaults region to us-east-1 if no region is given', (done) ->
     output = stringstream.createStream()
     @expects = [
@@ -571,5 +571,6 @@ describe 'deploy', ->
       output: output
       createAwsClient: @mockAws
     , (err) =>
+      throw err if err?
       output.toString().should.include 'Attempting to create it in the region us-east-1.'
       done()
