@@ -19,21 +19,18 @@ qfilter = (list, filterFunc) ->
 
 maskString = (str) -> str.slice(0, 4) + _.times(str.length-4, -> '*').join('')
 
-module.exports = (options, callback = ->) ->
-
-  {
-    output
-    createAwsClient
-    dns
-    bucket
-    key
-    secret
-    region
-    index
-    error
-    source
-  } = options
-
+module.exports = ({
+  output
+  createAwsClient
+  dns
+  bucket
+  key
+  secret
+  region
+  index
+  error
+  source
+}, callback = ->) ->
 
   return callback(new Error("Must supply a bucket")) if !bucket?
   return callback(new Error("Must supply an AWS key")) if !key?
@@ -80,7 +77,6 @@ module.exports = (options, callback = ->) ->
     aws.giveEveryoneReadAccess(bucket)
   .then ->
     if dns?
-      
       if dns.username? && dns.password?
         log()
         log "Configuring DNS at #{dns.namespace} with username #{maskString(dns.username)} and password #{maskString(dns.password)}."
@@ -91,16 +87,13 @@ module.exports = (options, callback = ->) ->
         log "WARNING: Provided domain registrar, but not username/password."
 
   .then ->
-
     log()
     log "Uploading #{source}:"
-
     wrench.readdirSyncRecursive(source).map (x) -> { fullpath: path.join(source, x), name: x }
 
   .then (files) ->
     qfilter files, (file) -> powerfsIsFile(file.fullpath)
 
-  # Upload the remaining files
   .then (files) ->
     counter = 0
 
