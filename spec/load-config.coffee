@@ -188,3 +188,27 @@ describe 'load-config', ->
         res.bucket.should.eql 'file1'
         res.key.should.eql 'key!'
         done()
+
+
+
+    it 'load should throw an exception if any of the config files are not JSON', (done) ->
+
+      files = [
+        '{ "bucketful": { "bucket": "file1", "key": "key!" } }'
+        'this is not json'
+      ]
+
+      load = config.createLoader({ })
+
+      async.map files, (file, callback) ->
+        tmp.file propagate callback, (tmpFile) ->
+          fs.writeFile tmpFile, file, propagate callback, ->
+            callback(null, tmpFile)
+      , (err, temps) ->
+        try
+          res = load({
+            configs: temps.join(';')
+          })
+        catch ex
+          ex.message.should.eql 'Error parsing your JSON configuration file.'
+          done()
