@@ -161,3 +161,30 @@ describe 'load-config', ->
         res.key.should.eql 'key!'
         res.secret.should.eql 'secret!'
         done()
+
+
+
+    it 'accepts configs parameter files that does not exist', (done) ->
+
+      files = [
+        bucketful: {
+          bucket: 'file1'
+          key: 'key!'
+        }
+      ]
+
+      load = config.createLoader({ })
+
+      async.map files, (file, callback) ->
+        tmp.file propagate callback, (tmpFile) ->
+          fs.writeFile tmpFile, JSON.stringify(file), propagate callback, ->
+            callback(null, tmpFile)
+      , (err, temps) ->
+        throw err if err?
+        load = config.createLoader({ })
+        res = load({
+          configs: 'file-does-not-exist;' + temps.join(';')
+        })
+        res.bucket.should.eql 'file1'
+        res.key.should.eql 'key!'
+        done()
