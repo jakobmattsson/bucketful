@@ -284,3 +284,14 @@ describe 'deploy', ->
     , (err) =>
       err.message.should.eql 'cannot list buckets'
       done()
+
+
+
+  it 'can be executed without a callback', (done) ->
+
+    deploy
+      createAwsClient: @mockAws
+
+    setTimeout ->
+      done()
+    , 10

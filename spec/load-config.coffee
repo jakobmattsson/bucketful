@@ -212,3 +212,10 @@ describe 'load-config', ->
         catch ex
           ex.message.should.eql 'Error parsing your JSON configuration file.'
           done()
+
+
+
+    it 'can run "load" without arguments', (done) ->
+      load = config.createLoader({ })
+      load()
+      done()

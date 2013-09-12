@@ -88,7 +88,7 @@ module.exports = (options, callback = ->) ->
         Q.nfcall(dns.setCNAME, bucket, cname)
       else
         log()
-        log "WARNING: Provided domain registrar, but not username/password"
+        log "WARNING: Provided domain registrar, but not username/password."
 
   .then ->
 
@@ -118,7 +118,7 @@ module.exports = (options, callback = ->) ->
   .then ->
     log ""
     log "Site now available on: http://#{bucket}.s3-website-#{region}.amazonaws.com"
-    if dns?.username? && dns?.password?
+    if dns? && dns.username? && dns.password?
       log "DNS configured to also make it available at: http://#{bucket}"
     else
       log "No DNS configured."
