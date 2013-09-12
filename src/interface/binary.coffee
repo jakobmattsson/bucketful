@@ -1,16 +1,14 @@
+process.on 'uncaughtException', (err) ->
+  console.log('Uncaught exception!', err?.message || err)
+
 optimist = require 'optimist'
-packageData = require '../../package.json'
 bucketful = require './api'
 help = require '../implementation/help'
 
-if optimist.argv.help
-  console.log(help.getHelpText())
-else if optimist.argv.version
-  console.log(packageData.version)
-else
-  process.on 'uncaughtException', (err) ->
-    console.log('Uncaught exception!', err?.message || err)
+type = 'help' if optimist.argv.help
+type = 'version' if optimist.argv.version
 
+help.binaryMeta type, process.stdout, ->
   conf = bucketful.load()
   conf.output = process.stdout
   bucketful.deploy conf, (err) ->

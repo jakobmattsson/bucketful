@@ -1,14 +1,16 @@
 should = require 'should'
 jscov = require 'jscov'
 help = require jscov.cover('..', 'src', 'implementation/help')
+{createStream} = require './util/stringstream'
 
 describe 'help', ->
 
-  describe 'getHelpText', ->
+  describe 'binaryMeta', ->
 
-    it 'produces the expected help text', (done) ->
-
-      help.getHelpText().should.eql '''
+    it 'produces the expected help text when given the first arg "help"', (done) ->
+      stream = createStream()
+      help.binaryMeta('help', stream, ->)
+      stream.toString().should.eql '''
         Deploys websites to Amazon S3
 
         Options:
@@ -24,5 +26,22 @@ describe 'help', ->
           --version, -v  Print the current version number
           --help, -h     Show this help message
 
+
       '''
+      done()
+
+
+    it 'prints the current version when given the string "version"', (done) ->
+      stream = createStream()
+      help.binaryMeta('version', stream, ->)
+      stream.toString().should.eql '0.14.1\n'
+      done()
+
+
+    it 'runs the callback and does nothing else when given the string "version"', (done) ->
+      ran = false
+      stream = createStream()
+      help.binaryMeta(null, stream, -> ran = true)
+      stream.toString().should.eql ''
+      ran.should.eql true
       done()
