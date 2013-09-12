@@ -31,9 +31,9 @@ describe 'load-config', ->
         ['source', 'source', undefined]
         ['key', 'key', undefined]
         ['secret', 'secret', undefined]
-        ['region', 'region', 'us-east-1']
-        ['index', 'index', 'index.html']
-        ['error', 'error', 'index.html']
+        ['region', 'region', undefined]
+        ['index', 'index', undefined]
+        ['error', 'error', undefined]
       ]
 
       outExpect = _.object defaults.map ([outname, key, defaultValue]) ->
@@ -85,9 +85,9 @@ describe 'load-config', ->
             ['source', 'source', undefined]
             ['key', 'key', undefined]
             ['secret', 'secret', undefined]
-            ['region', 'region', 'us-east-1']
-            ['index', 'index', 'index.html']
-            ['error', 'error', 'index.html']
+            ['region', 'region', undefined]
+            ['index', 'index', undefined]
+            ['error', 'error', undefined]
           ]
 
           outExpect = _.object defaults.map ([outname, key, defaultValue]) ->
@@ -161,38 +161,3 @@ describe 'load-config', ->
         res.key.should.eql 'key!'
         res.secret.should.eql 'secret!'
         done()
-
-
-
-    describe 'when given no error-argument', ->
-
-      it 'uses index.html if there is no 404.html in the source and no index is given', (done) ->
-        load = config.createLoader({ })
-        res = load({
-          source: 'spec/data'
-        })
-        res.index.should.eql 'index.html'
-        res.error.should.eql 'index.html'
-        done()
-
-      it 'uses the same file as index if such a file is given', (done) ->
-        load = config.createLoader({ })
-        res = load({
-          source: 'spec/data'
-          index: 'something.html'
-        })
-        res.index.should.eql 'something.html'
-        res.error.should.eql 'something.html'
-        done()
-
-      it 'uses 404.html, if such a file exists in the source root', (done) ->
-        tmp.dir (err, tmpDir) ->
-          should.not.exist err
-          fs.writeFileSync(tmpDir + '/404.html', 'error')
-          load = config.createLoader({ })
-          res = load({
-            source: tmpDir
-          })
-          res.index.should.eql 'index.html'
-          res.error.should.eql '404.html'
-          done()

@@ -31,10 +31,6 @@ exports.createLoader = ({ loadPlugin, userConfigPath }) ->
 
     nconf.env('__')
     nconf.file("user", userConfigPath) if userConfigPath
-    nconf.defaults
-      bucketful:
-        index: 'index.html'
-        region: 'us-east-1'
 
     dns = nconf.get('bucketful:dns')
     source = nconf.get('bucketful:source')
@@ -59,7 +55,7 @@ exports.createLoader = ({ loadPlugin, userConfigPath }) ->
       secret: nconf.get('bucketful:secret')
       region: nconf.get('bucketful:region')
       index: nconf.get('bucketful:index')
-      error: nconf.get('bucketful:error') || if has404 then '404.html' else nconf.get('bucketful:index')
+      error: nconf.get('bucketful:error')
       source: resolvedSource
       dns: dnsObject
     }
