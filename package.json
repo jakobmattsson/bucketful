@@ -16,6 +16,7 @@
     "node": ">= 0.10.13"
   },
   "dependencies": {
+    "async": "^0.2.9",
     "mime": "^1.2.10",
     "aws-sdk": "^1.4.1",
     "powerfs": "^0.2.3",
@@ -26,6 +27,7 @@
     "nconf": "^0.6"
   },
   "devDependencies": {
+    "tmp": "^0.0",
     "jscov": "^0.5.7",
     "mocha": "^1.12.1",
     "mocha-term-cov-reporter": "^0.1.4",

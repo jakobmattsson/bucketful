@@ -98,6 +98,7 @@ module.exports = ({
 
     Q.all files.map (file, i) ->
       aws.putFile({
+        defaultContentType: 'text/html'
         filename: file.fullpath
         target: file.name
         bucket: bucket

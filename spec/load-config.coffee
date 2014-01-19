@@ -210,7 +210,7 @@ describe 'load-config', ->
             configs: temps.join(';')
           })
         catch ex
-          ex.message.should.eql 'Error parsing your JSON configuration file.'
+          ex.message.should.match /Error parsing your JSON configuration file/
           done()
 
 

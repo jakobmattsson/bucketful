@@ -4,11 +4,11 @@ _ = require 'underscore'
 
 propagate = (onErr, onSucc) -> (err, rest...) -> if err? then onErr(err) else onSucc(rest...)
 
-exports.putFile = (s3client, {filename, target, bucket}, callback) ->
+exports.putFile = (s3client, {filename, target, bucket, defaultContentType}, callback) ->
   s3client.putObject
     ACL: 'public-read'
     Bucket: bucket
-    ContentType: mime.lookup(filename)
+    ContentType: path.extname(filename) == '' ? defaultContentType : mime.lookup(filename)
     Key: target.replace(/^\/*/g, '')
     Body: fs.readFileSync(filename)
   , callback
