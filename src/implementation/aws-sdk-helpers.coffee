@@ -1,5 +1,6 @@
 fs = require 'fs'
 mime = require 'mime'
+path = require 'path'
 _ = require 'underscore'
 
 propagate = (onErr, onSucc) -> (err, rest...) -> if err? then onErr(err) else onSucc(rest...)
@@ -8,7 +9,7 @@ exports.putFile = (s3client, {filename, target, bucket, defaultContentType}, cal
   s3client.putObject
     ACL: 'public-read'
     Bucket: bucket
-    ContentType: path.extname(filename) == '' ? defaultContentType : mime.lookup(filename)
+    ContentType: if path.extname(filename) == '' then defaultContentType else mime.lookup(filename)
     Key: target.replace(/^\/*/g, '')
     Body: fs.readFileSync(filename)
   , callback
