@@ -338,7 +338,6 @@ describe 'deploy', ->
     , (err) =>
       throw err if err?
       @expects.should.have.length 0
-      console.log "done!"
       done()
 
 
