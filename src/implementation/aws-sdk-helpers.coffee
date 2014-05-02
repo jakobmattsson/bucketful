@@ -34,6 +34,8 @@ exports.giveEveryoneReadAccess = (s3client, name, callback) ->
         URI: 'http://acs.amazonaws.com/groups/global/AllUsers'
         Type: 'Group'
 
+    pars.Grants = _.uniq(pars.Grants, (grant) -> JSON.stringify(grant))
+
     s3client.putBucketAcl
       Bucket: name
       AccessControlPolicy: pars
