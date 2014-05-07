@@ -37,8 +37,8 @@ exports.before = (done) ->
         Grants: [
           Permission: 'READ'
           Grantee:
-            URI: 'http://acs.amazonaws.com/groups/global/AllUsers'
             Type: 'Group'
+            URI: 'http://acs.amazonaws.com/groups/global/AllUsers'
         ]
         Owner: {}
       )

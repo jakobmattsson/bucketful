@@ -2,6 +2,7 @@ fs = require 'fs'
 mime = require 'mime'
 path = require 'path'
 _ = require 'underscore'
+equal = require 'deep-equal'
 
 propagate = (onErr, onSucc) -> (err, rest...) -> if err? then onErr(err) else onSucc(rest...)
 
@@ -34,7 +35,7 @@ exports.giveEveryoneReadAccess = (s3client, name, callback) ->
         URI: 'http://acs.amazonaws.com/groups/global/AllUsers'
         Type: 'Group'
 
-    pars.Grants = _.uniq(pars.Grants, (grant) -> JSON.stringify(grant))
+    pars.Grants = _.uniq(pars.Grants, (grant) -> equal(grant))
 
     s3client.putBucketAcl
       Bucket: name
