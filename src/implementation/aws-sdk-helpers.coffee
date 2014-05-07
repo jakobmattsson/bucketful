@@ -28,6 +28,7 @@ exports.giveEveryoneReadAccess = (s3client, name, callback) ->
     Bucket: name
   , propagate callback, (res) ->
     pars = _.pick(res, 'Grants', 'Owner')
+    found = []
 
     pars.Grants.push
       Permission: 'READ'
@@ -35,7 +36,10 @@ exports.giveEveryoneReadAccess = (s3client, name, callback) ->
         URI: 'http://acs.amazonaws.com/groups/global/AllUsers'
         Type: 'Group'
 
-    pars.Grants = _.uniq(pars.Grants, (grant) -> equal(grant))
+    pars.Grants = _.filter(pars.Grants, (grant) ->
+      unless _.some(found, (foundGrant) -> equal(grant, foundGrant))
+        return found.push grant
+    )
 
     s3client.putBucketAcl
       Bucket: name
