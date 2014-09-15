@@ -262,6 +262,85 @@ describe 'deploy', ->
       done()
 
 
+  it 'should not duplicate bucket ACL policies', (done) ->
+
+    @expects = [
+      method: 'createAws'
+      args: [
+        region: 'eu-west-1'
+        key: 'awskey'
+        secret: 'awssecret'
+      ]
+    ,
+      method: 'listBuckets'
+      args: [{}]
+    ,
+      method: 'putBucketWebsite'
+      args: [
+        Bucket: 'dedupe.leanmachine.se'
+        WebsiteConfiguration:
+          IndexDocument:
+            Suffix: 'index.html'
+          ErrorDocument:
+            Key : 'error.html'
+      ]
+    ,
+      method: 'getBucketAcl'
+      args: [
+        Bucket: 'dedupe.leanmachine.se'
+      ]
+    ,
+      method: 'putBucketAcl'
+      args: [
+        Bucket: 'dedupe.leanmachine.se'
+        AccessControlPolicy:
+          Owner: {}
+          Grants: [
+            Permission: 'READ'
+            Grantee:
+              URI: 'http://acs.amazonaws.com/groups/global/AllUsers'
+              Type: 'Group'
+          ]
+      ]
+    ,
+      method: 'putObject'
+      args: [
+        ACL: 'public-read'
+        Bucket: 'dedupe.leanmachine.se'
+        ContentType: 'text/plain'
+        Key: 'file.txt'
+        Body: fs.readFileSync(path.resolve(@uploadDir, 'file.txt'))
+      ]
+    ,
+      method: 'putObject'
+      args: [
+        ACL: 'public-read'
+        Bucket: 'dedupe.leanmachine.se'
+        ContentType: 'application/octet-stream'
+        Key: 'other.coffee'
+        Body: fs.readFileSync(path.resolve(@uploadDir, 'other.coffee'))
+      ]
+    ]
+
+    @listBuckets = override @listBuckets, (base, opts, callback) =>
+      base opts, ->
+        callback(null, { Buckets: [{ Name: 'dedupe.leanmachine.se' }] })
+
+    deploy
+      bucket: 'dedupe.leanmachine.se'
+      key: 'awskey'
+      secret: 'awssecret'
+      region: 'eu-west-1'
+      index: 'index.html'
+      error: 'error.html'
+      source: @uploadDir
+      createAwsClient: @mockAws
+    , (err) =>
+      throw err if err?
+      @expects.should.have.length 0
+      done()
+
+
 
 
 

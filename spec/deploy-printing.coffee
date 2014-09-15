@@ -38,7 +38,6 @@ describe 'deploy', ->
       throw err if err?
       output.toString().should.eql """
 
-
         Accessing aws account using key awsk** and secret awss*****.
         Bucket mybucket.leanmachine.se found in the region eu-west-1.
         Setting website config using index.html as index and error.html as error.
@@ -73,7 +72,6 @@ describe 'deploy', ->
     , (err) =>
       throw err if err?
       output.toString().should.eql """
-
 
         Accessing aws account using key awsk** and secret awss*****.
         Bucket mybucket.leanmachine.se not found in the given account.
@@ -110,7 +108,6 @@ describe 'deploy', ->
     , (err) =>
       throw err if err?
       output.toString().should.eql """
-
 
         Accessing aws account using key awsk** and secret awss*****.
         Bucket mybucket.leanmachine.se not found in the given account.
@@ -155,7 +152,6 @@ describe 'deploy', ->
     , (err) =>
       throw err if err?
       output.toString().should.eql """
-
 
         Accessing aws account using key awsk** and secret awss*****.
         Bucket mybucket.leanmachine.se not found in the given account.

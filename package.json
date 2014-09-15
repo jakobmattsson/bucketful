@@ -24,7 +24,8 @@
     "optimist": "^0.6.0",
     "wrench": "^1.3.9",
     "underscore": "^1.3.3",
-    "nconf": "^0.6"
+    "nconf": "^0.6",
+    "deep-equal": "^0.2.1"
   },
   "devDependencies": {
     "tmp": "^0.0",
@@ -36,7 +37,7 @@
   },
   "scripts": {
     "coverage": "jscov --expand src .cov && JSCOV=.cov mocha --compilers coffee:coffee-script --reporter mocha-term-cov-reporter --recursive spec",
-    "test": "mocha --compilers coffee:coffee-script --recursive spec",
+    "test": "mocha --compilers coffee:coffee-script/register --recursive spec",
     "pretest": "coffee -co lib src",
     "prepublish": "coffee -co lib src"
   }

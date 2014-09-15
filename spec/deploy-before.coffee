@@ -32,10 +32,29 @@ exports.before = (done) ->
 
   @getBucketAcl = (opts, callback) ->
     popOne('getBucketAcl', arguments)
-    callback(null, {
-      Grants: []
-      Owner: {}
-    })
+    if opts.Bucket is 'dedupe.leanmachine.se'
+      callback(null,
+        Grants: [
+          {
+            Permission: 'READ'
+            Grantee:
+              Type: 'Group'
+              URI: 'http://acs.amazonaws.com/groups/global/AllUsers'
+          },
+          {
+            Permission: 'READ'
+            Grantee:
+              URI: 'http://acs.amazonaws.com/groups/global/AllUsers'
+              Type: 'Group'
+          }
+        ]
+        Owner: {}
+      )
+    else
+      callback(null,
+        Grants: []
+        Owner: {}
+      )
 
   @putBucketAcl = (opts, callback) ->
     popOne('putBucketAcl', arguments)
