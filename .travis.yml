@@ -1,7 +1,14 @@
 language: node_js
 node_js:
-  - "0.10"
-  - "0.11"
-branches:
-  only:
-    - master
+- '0.10'
+- '0.11'
+deploy:
+  provider: npm
+  email: jakob.mattsson@gmail.com
+  skip_cleanup: true
+  api_key:
+    secure: q1VNPY4pVTV9sRQlOsHTUwY6TXOaZK/g5I3yXSLaqKD95L2Mc1D1WxE0yaq490Kx0y/Kj6uJ8W7sC+H652DPs2Gbwdc+OOaL5ghnWlMvddW7CmTMH5iQVgtYL/gj0IoCI8ypPT/mANmLo1SfkRV+8OAp7iMu9Yqo1guCX+wfedk=
+  on:
+    tags: true
+    branch: master
+    repo: jakobmattsson/bucketful
