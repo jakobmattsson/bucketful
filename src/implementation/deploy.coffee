@@ -43,8 +43,8 @@ module.exports = ({
   region ?= 'us-east-1'
   index ?= 'index.html'
 
-  powerfsIsFile = Q.nbind(powerfs.isFile, powerfs)
-  powerfsFileExits = Q.nbind(((p, callback) -> powerfs.fileExists(p, (r) -> callback(null, r))), powerfs)
+  powerfsIsFile = Q.denodeify powerfs.isFile.bind(powerfs)
+  powerfsFileExits = Q.denodeify ((p, callback) -> powerfs.fileExists(p, (r) -> callback(null, r)))
 
   aws = awsClient(createAwsClient({ region, key: key, secret: secret }))
 
@@ -77,10 +77,11 @@ module.exports = ({
     aws.giveEveryoneReadAccess(bucket)
   .then ->
     if dns?
+      setCNAME = Q.denodeify(dns.setCNAME)
       if dns.username? && dns.password?
         log()
         log "Configuring DNS at #{dns.namespace} with username #{maskString(dns.username)} and password #{maskString(dns.password)}."
-        Q.nfcall(dns.setCNAME, bucket, "#{bucket}.s3-website-#{region}.amazonaws.com")
+        setCNAME(bucket, "#{bucket}.s3-website-#{region}.amazonaws.com")
       else
         log()
         log "WARNING: Provided domain registrar, but not username/password."

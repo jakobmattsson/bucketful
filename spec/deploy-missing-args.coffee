@@ -111,7 +111,7 @@ describe 'deploy', ->
       createAwsClient: @mockAws
     , (err) =>
       throw err if err?
-      output.toString().should.include 'Attempting to create it in the region us-east-1.'
+      output.toString().should.containEql 'Attempting to create it in the region us-east-1.'
       done()
 
 

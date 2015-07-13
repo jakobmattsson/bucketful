@@ -16,7 +16,7 @@ exports.before = (done) ->
         args.should.eql next.args
       else
         args.slice(0, -1).should.eql next.args
-        args.slice(-1)[0].should.be.a('function')
+        args.slice(-1)[0].should.be.an.instanceOf Function
 
   @listBuckets = (opts, callback) ->
     popOne('listBuckets', arguments)

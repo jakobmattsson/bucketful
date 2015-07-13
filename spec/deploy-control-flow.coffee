@@ -76,7 +76,7 @@ describe 'deploy', ->
       args: [
         ACL: 'public-read'
         Bucket: 'mybucket.leanmachine.se'
-        ContentType: 'application/octet-stream'
+        ContentType: 'text/coffeescript'
         Key: 'other.coffee'
         Body: fs.readFileSync(path.resolve(@uploadDir, 'other.coffee'))
       ]
@@ -160,7 +160,7 @@ describe 'deploy', ->
       args: [
         ACL: 'public-read'
         Bucket: 'mybucket.leanmachine.se'
-        ContentType: 'application/octet-stream'
+        ContentType: 'text/coffeescript'
         Key: 'other.coffee'
         Body: fs.readFileSync(path.resolve(@uploadDir, 'other.coffee'))
       ]
@@ -237,7 +237,7 @@ describe 'deploy', ->
       args: [
         ACL: 'public-read'
         Bucket: 'mybucket.leanmachine.se'
-        ContentType: 'application/octet-stream'
+        ContentType: 'text/coffeescript'
         Key: 'other.coffee'
         Body: fs.readFileSync(path.resolve(@uploadDir, 'other.coffee'))
       ]
@@ -316,7 +316,7 @@ describe 'deploy', ->
       args: [
         ACL: 'public-read'
         Bucket: 'dedupe.leanmachine.se'
-        ContentType: 'application/octet-stream'
+        ContentType: 'text/coffeescript'
         Key: 'other.coffee'
         Body: fs.readFileSync(path.resolve(@uploadDir, 'other.coffee'))
       ]
