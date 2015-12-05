@@ -18,7 +18,7 @@ exports.deploy = (options, callback) ->
         accessKeyId: key
         secretAccessKey: secret
       })
-      new AWS.S3().client
+      new AWS.S3()
   })
 
   deploy(finalConf, callback)

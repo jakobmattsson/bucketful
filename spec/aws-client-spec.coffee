@@ -5,8 +5,8 @@ describe 'aws-client', ->
 
   it 'runs using the expected interface', ->
     AWS.config.update({
-      region: "eu-west-1"
+      region: "us-east-1"
       accessKeyId: "key"
       secretAccessKey: "secret"
     })
-    should.exist new AWS.S3().client
+    should.exist new AWS.S3().getObject
